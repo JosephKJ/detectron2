@@ -98,6 +98,7 @@ _C.DATASETS.TEST = ()
 _C.DATASETS.PROPOSAL_FILES_TEST = ()
 # Number of top scoring precomputed proposals to keep for test
 _C.DATASETS.PRECOMPUTED_PROPOSAL_TOPK_TEST = 1000
+#
 
 # -----------------------------------------------------------------------------
 # DataLoader
@@ -250,7 +251,7 @@ _C.MODEL.ROI_HEADS.IOU_LABELS = [0, 1]
 # Total number of RoIs per training minibatch =
 #   ROI_HEADS.BATCH_SIZE_PER_IMAGE * SOLVER.IMS_PER_BATCH
 # E.g., a common configuration is: 512 * 16 = 8192
-_C.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512
+_C.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 1
 # Target fraction of RoI minibatch that is labeled foreground (i.e. class > 0)
 _C.MODEL.ROI_HEADS.POSITIVE_FRACTION = 0.25
 

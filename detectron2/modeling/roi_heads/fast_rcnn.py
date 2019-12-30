@@ -196,6 +196,13 @@ class FastRCNNOutputs(object):
             scalar Tensor
         """
         self._log_accuracy()
+        print(self.pred_class_logits)
+        print(self.pred_class_logits.size())
+
+        print(self.gt_classes)
+        print(len(self.gt_classes))
+
+        print(F.cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean"))
         return F.cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean")
 
     def smooth_l1_loss(self):
