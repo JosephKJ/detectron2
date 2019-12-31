@@ -205,8 +205,33 @@ def print_instances_class_histogram(dataset_dicts, class_names):
     )
 
 
+def filter_images_with_class(dataset_dicts, cfg):
+    if not cfg.MODEL.ROI_HEADS.LEARN_INCREMENTALLY:
+        return dataset_dicts
+
+    num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
+    num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
+
+    if cfg.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES:
+        # Keep classes from 0 .. num_base_class
+        allowed_class = list(range(0, num_base_class))
+    else:
+        # Keep classes from num_base_class .. num_base_class+num_novel_class
+        allowed_class = list(range(num_base_class, num_base_class+num_novel_class))
+
+    for entry in copy.copy(dataset_dicts):
+        annos = entry["annotations"]
+        for annotation in copy.copy(annos):
+            if annotation["category_id"] not in allowed_class:
+                annos.remove(annotation)
+        if len(annos) == 0:
+            dataset_dicts.remove(entry)
+
+    return dataset_dicts
+
+
 def get_detection_dataset_dicts(
-    dataset_names, filter_empty=True, min_keypoints=0, proposal_files=None
+    dataset_names, filter_empty=True, min_keypoints=0, proposal_files=None, cfg=None
 ):
     """
     Load and prepare dataset dicts for instance detection/segmentation and semantic segmentation.
@@ -246,6 +271,9 @@ def get_detection_dataset_dicts(
         try:
             class_names = MetadataCatalog.get(dataset_names[0]).thing_classes
             check_metadata_consistency("thing_classes", dataset_names)
+            print_instances_class_histogram(dataset_dicts, class_names)
+
+            dataset_dicts = filter_images_with_class(dataset_dicts, cfg)
             print_instances_class_histogram(dataset_dicts, class_names)
         except AttributeError:  # class names are not available for this dataset
             pass
@@ -292,6 +320,7 @@ def build_detection_train_loader(cfg, mapper=None):
         if cfg.MODEL.KEYPOINT_ON
         else 0,
         proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN if cfg.MODEL.LOAD_PROPOSALS else None,
+        cfg=cfg
     )
     dataset = DatasetFromList(dataset_dicts, copy=False)
 
@@ -360,6 +389,7 @@ def build_detection_test_loader(cfg, dataset_name, mapper=None):
         ]
         if cfg.MODEL.LOAD_PROPOSALS
         else None,
+        cfg=cfg
     )
 
     dataset = DatasetFromList(dataset_dicts)

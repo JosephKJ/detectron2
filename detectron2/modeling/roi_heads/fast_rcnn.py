@@ -124,7 +124,7 @@ class FastRCNNOutputs(object):
     """
 
     def __init__(
-        self, box2box_transform, pred_class_logits, pred_proposal_deltas, proposals, smooth_l1_beta
+        self, box2box_transform, pred_class_logits, pred_proposal_deltas, proposals, smooth_l1_beta, invalid_class_range
     ):
         """
         Args:
@@ -152,6 +152,7 @@ class FastRCNNOutputs(object):
         self.pred_class_logits = pred_class_logits
         self.pred_proposal_deltas = pred_proposal_deltas
         self.smooth_l1_beta = smooth_l1_beta
+        self.invalid_class_range = invalid_class_range
 
         box_type = type(proposals[0].proposal_boxes)
         # cat(..., dim=0) concatenates over all images in the batch
@@ -196,13 +197,14 @@ class FastRCNNOutputs(object):
             scalar Tensor
         """
         self._log_accuracy()
-        print(self.pred_class_logits)
-        print(self.pred_class_logits.size())
-
-        print(self.gt_classes)
-        print(len(self.gt_classes))
-
-        print(F.cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean"))
+        # print(self.pred_class_logits)
+        # print(self.pred_class_logits.size())
+        #
+        # print(self.gt_classes)
+        # print(len(self.gt_classes))
+        #
+        # print(F.cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean"))
+        # print(self.invalid_class_range)
         return F.cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean")
 
     def smooth_l1_loss(self):

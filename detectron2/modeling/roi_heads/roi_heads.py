@@ -348,6 +348,14 @@ class Res5ROIHeads(ROIHeads):
                 ShapeSpec(channels=out_channels, width=pooler_resolution, height=pooler_resolution),
             )
 
+        num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
+        num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
+        num_class = cfg.MODEL.ROI_HEADS.NUM_CLASSES
+        if cfg.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES:
+            self.invalid_class_range = list(range(num_base_class, num_class))
+        else:
+            self.invalid_class_range = list(range(num_base_class + num_novel_class, num_class))
+
     def _build_res5_block(self, cfg):
         # fmt: off
         stage_channel_factor = 2 ** 3  # res5 is 8x res2
@@ -402,6 +410,7 @@ class Res5ROIHeads(ROIHeads):
             pred_proposal_deltas,
             proposals,
             self.smooth_l1_beta,
+            self.invalid_class_range,
         )
 
         if self.training:
@@ -627,6 +636,7 @@ class StandardROIHeads(ROIHeads):
             pred_proposal_deltas,
             proposals,
             self.smooth_l1_beta,
+            self.invalid_class_range,
         )
         if self.training:
             return outputs.losses()

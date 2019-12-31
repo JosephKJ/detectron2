@@ -236,8 +236,17 @@ _C.MODEL.RPN.NMS_THRESH = 0.7
 # ---------------------------------------------------------------------------- #
 _C.MODEL.ROI_HEADS = CN()
 _C.MODEL.ROI_HEADS.NAME = "Res5ROIHeads"
-# Number of foreground classes
+# Maximum number of foreground classes to expect
 _C.MODEL.ROI_HEADS.NUM_CLASSES = 80
+# Flag to turn on/off Incremental Learning
+_C.MODEL.ROI_HEADS.LEARN_INCREMENTALLY = False
+# Flag to select whether to learn base classes or new expanded classes
+_C.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES = True
+# Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
+_C.MODEL.ROI_HEADS.NUM_BASE_CLASSES = 60
+# Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
+_C.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES = 20
+
 # Names of the input feature maps to be used by ROI heads
 # Currently all heads (box, mask, ...) use the same input feature map list
 # e.g., ["p2", "p3", "p4", "p5"] is commonly used for FPN
