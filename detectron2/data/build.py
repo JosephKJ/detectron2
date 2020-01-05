@@ -203,6 +203,7 @@ def print_instances_class_histogram(dataset_dicts, class_names):
         + colored(table, "cyan"),
         key="message",
     )
+    logging.getLogger(__name__).info('Number of images: ' + str(len(dataset_dicts)))
 
 
 def filter_images_with_class(dataset_dicts, cfg):
