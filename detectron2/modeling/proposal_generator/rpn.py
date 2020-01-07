@@ -13,6 +13,7 @@ from ..matcher import Matcher
 from .build import PROPOSAL_GENERATOR_REGISTRY
 from .rpn_outputs import RPNOutputs, find_top_rpn_proposals
 
+
 RPN_HEAD_REGISTRY = Registry("RPN_HEAD")
 """
 Registry for RPN heads, which take feature maps and perform
@@ -121,6 +122,11 @@ class RPN(nn.Module):
         )
         self.rpn_head = build_rpn_head(cfg, [input_shape[f] for f in self.in_features])
 
+        self.base_model = None
+
+    def set_base_model(self, base_model):
+        self.base_model = base_model
+
     def forward(self, images, features, gt_instances=None):
         """
         Args:
@@ -161,6 +167,13 @@ class RPN(nn.Module):
             losses = {k: v * self.loss_weight for k, v in outputs.losses().items()}
         else:
             losses = {}
+
+        if self.base_model is not None:
+            # Has distillation enabled
+            prev_pred_objectness_logits, prev_pred_anchor_deltas = self.base_model.proposal_generator.rpn_head(features)
+            print(prev_pred_objectness_logits[0].size())
+            print(prev_pred_objectness_logits)
+            pass
 
         with torch.no_grad():
             # Find the top proposals by applying NMS and removing boxes that

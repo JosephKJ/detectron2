@@ -242,6 +242,14 @@ class DefaultTrainer(SimpleTrainer):
         optimizer = self.build_optimizer(cfg, model)
         data_loader = self.build_train_loader(cfg)
 
+        # Distillation
+        self.enable_distillation = cfg.DISTILL.ENABLE
+        if self.enable_distillation:
+            logger = logging.getLogger(__name__)
+            logger.info('Creating base model for distillation.')
+            self.base_model = self.build_model(cfg)
+            self.base_model_checkpointer = DetectionCheckpointer(self.base_model, cfg.OUTPUT_DIR)
+
         # For training, wrap with DDP. But don't need this for inference.
         if comm.get_world_size() > 1:
             model = DistributedDataParallel(
@@ -282,6 +290,11 @@ class DefaultTrainer(SimpleTrainer):
             )
             + 1
         )
+        if self.enable_distillation:
+            logger = logging.getLogger(__name__)
+            logger.info('Loading the weights to base model for distillation.')
+            self.base_model_checkpointer.resume_or_load(self.cfg.MODEL.WEIGHTS, resume=True)
+            self.model.set_base_model(self.base_model)
 
     def build_hooks(self):
         """

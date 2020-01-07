@@ -584,3 +584,18 @@ _C.VIS_PERIOD = 0
 # Do not commit any configs into it.
 _C.GLOBAL = CN()
 _C.GLOBAL.HACK = 1.0
+
+# ---------------------------------------------------------------------------- #
+# Distillation
+# ---------------------------------------------------------------------------- #
+_C.DISTILL = CN()
+
+# Single switch to turn on/off distillation
+_C.DISTILL.ENABLE = False
+
+# Enable distilling the backbone
+_C.DISTILL.BACKBONE = False
+# Enable distilling the RPN
+_C.DISTILL.RPN = False
+# Enable distilling the ROI Heads
+_C.DISTILL.ROI_HEADS = False

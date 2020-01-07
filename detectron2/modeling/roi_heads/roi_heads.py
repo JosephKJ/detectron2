@@ -355,6 +355,12 @@ class Res5ROIHeads(ROIHeads):
             self.invalid_class_range = list(range(num_base_class, num_class))
         else:
             self.invalid_class_range = list(range(num_base_class + num_novel_class, num_class))
+        logging.getLogger(__name__).info("Invalid class range: " + str(self.invalid_class_range))
+
+        self.base_model = None
+
+    def set_base_model(self, base_model):
+        self.base_model = base_model
 
     def _build_res5_block(self, cfg):
         # fmt: off
@@ -384,7 +390,14 @@ class Res5ROIHeads(ROIHeads):
 
     def _shared_roi_transform(self, features, boxes):
         x = self.pooler(features, boxes)
-        return self.res5(x)
+        return x
+
+    def get_predictions_from_boxes(self, boxes):
+        box_features = self.res5(boxes)
+        feature_pooled = box_features.mean(dim=[2, 3])
+        pred_class_logits, pred_proposal_deltas = self.box_predictor(feature_pooled)
+        del feature_pooled
+        return pred_class_logits, pred_proposal_deltas
 
     def forward(self, images, features, proposals, targets=None):
         """
@@ -397,9 +410,10 @@ class Res5ROIHeads(ROIHeads):
         del targets
 
         proposal_boxes = [x.proposal_boxes for x in proposals]
-        box_features = self._shared_roi_transform(
+        boxes = self._shared_roi_transform(
             [features[f] for f in self.in_features], proposal_boxes
         )
+        box_features = self.res5(boxes)
         feature_pooled = box_features.mean(dim=[2, 3])  # pooled to 1x1
         pred_class_logits, pred_proposal_deltas = self.box_predictor(feature_pooled)
         del feature_pooled

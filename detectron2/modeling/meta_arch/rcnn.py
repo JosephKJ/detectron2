@@ -36,6 +36,7 @@ class GeneralizedRCNN(nn.Module):
         self.roi_heads = build_roi_heads(cfg, self.backbone.output_shape())
         self.vis_period = cfg.VIS_PERIOD
         self.input_format = cfg.INPUT.FORMAT
+        self.base_model = None
 
         assert len(cfg.MODEL.PIXEL_MEAN) == len(cfg.MODEL.PIXEL_STD)
         num_channels = len(cfg.MODEL.PIXEL_MEAN)
@@ -43,6 +44,11 @@ class GeneralizedRCNN(nn.Module):
         pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).to(self.device).view(num_channels, 1, 1)
         self.normalizer = lambda x: (x - pixel_mean) / pixel_std
         self.to(self.device)
+
+    def set_base_model(self, base_model):
+        self.base_model = base_model
+        self.proposal_generator.set_base_model(base_model)
+        self.roi_heads.set_base_model(base_model)
 
     def visualize_training(self, batched_inputs, proposals):
         """
@@ -120,6 +126,7 @@ class GeneralizedRCNN(nn.Module):
             gt_instances = None
 
         features = self.backbone(images.tensor)
+        # prev_features = self.base_model.backbone(images.tensor)
 
         if self.proposal_generator:
             proposals, proposal_losses = self.proposal_generator(images, features, gt_instances)
