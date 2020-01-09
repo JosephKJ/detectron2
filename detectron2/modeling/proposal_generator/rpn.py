@@ -10,6 +10,7 @@ from detectron2.utils.registry import Registry
 from ..anchor_generator import build_anchor_generator
 from ..box_regression import Box2BoxTransform
 from ..matcher import Matcher
+from ..distillation_loss import rpn_loss
 from .build import PROPOSAL_GENERATOR_REGISTRY
 from .rpn_outputs import RPNOutputs, find_top_rpn_proposals
 
@@ -123,6 +124,7 @@ class RPN(nn.Module):
         self.rpn_head = build_rpn_head(cfg, [input_shape[f] for f in self.in_features])
 
         self.base_model = None
+        self.enable_rpn_distill = cfg.DISTILL.RPN
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -165,14 +167,18 @@ class RPN(nn.Module):
 
         if self.training:
             losses = {k: v * self.loss_weight for k, v in outputs.losses().items()}
+            if self.base_model is not None and self.enable_rpn_distill:
+                prev_pred_objectness_logits, prev_pred_anchor_deltas = self.base_model.proposal_generator.rpn_head(features)
+                rpn_dist_loss = rpn_loss(pred_objectness_logits, pred_anchor_deltas, prev_pred_objectness_logits, prev_pred_anchor_deltas)
+                losses.update(rpn_dist_loss)
         else:
             losses = {}
 
         if self.base_model is not None:
             # Has distillation enabled
             prev_pred_objectness_logits, prev_pred_anchor_deltas = self.base_model.proposal_generator.rpn_head(features)
-            print(prev_pred_objectness_logits[0].size())
-            print(prev_pred_objectness_logits)
+            # print(prev_pred_objectness_logits[0].size())
+            # print(prev_pred_objectness_logits)
             pass
 
         with torch.no_grad():

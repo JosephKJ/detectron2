@@ -208,7 +208,7 @@ def convert_c2_detectron_names(weights):
 
 # Note the current matching is not symmetric.
 # it assumes model_state_dict will have longer names.
-def align_and_update_state_dicts(model_state_dict, ckpt_state_dict, c2_conversion=True):
+def align_and_update_state_dicts(model_state_dict, ckpt_state_dict, c2_conversion=True, is_base_model=False):
     """
     Match names between the two state-dict, and update the values of model_state_dict in-place with
     copies of the matched tensor in ckpt_state_dict.
@@ -228,7 +228,12 @@ def align_and_update_state_dicts(model_state_dict, ckpt_state_dict, c2_conversio
     we want to match backbone[0].body.conv1.weight to conv1.weight, and
     backbone[0].body.res2.conv1.weight to res2.conv1.weight.
     """
-    model_keys = sorted(list(model_state_dict.keys()))
+    if is_base_model:
+        model_keys = sorted(list(model_state_dict.keys()))
+    else:
+        model_keys = sorted(list(model_state_dict.keys()))
+        model_keys = [key for key in model_keys if 'base_model' not in key]
+
     if c2_conversion:
         ckpt_state_dict, original_keys = convert_c2_detectron_names(ckpt_state_dict)
         # original_keys: the name in the original dict (before renaming)

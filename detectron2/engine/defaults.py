@@ -248,7 +248,9 @@ class DefaultTrainer(SimpleTrainer):
             logger = logging.getLogger(__name__)
             logger.info('Creating base model for distillation.')
             self.base_model = self.build_model(cfg)
-            self.base_model_checkpointer = DetectionCheckpointer(self.base_model, cfg.OUTPUT_DIR)
+            for param in self.base_model.parameters():
+                param.requires_grad = False
+            model.set_base_model(self.base_model)
 
         # For training, wrap with DDP. But don't need this for inference.
         if comm.get_world_size() > 1:
@@ -267,6 +269,10 @@ class DefaultTrainer(SimpleTrainer):
             optimizer=optimizer,
             scheduler=self.scheduler,
         )
+        if self.enable_distillation:
+            self.base_model_checkpointer = DetectionCheckpointer(self.base_model, cfg.OUTPUT_DIR,
+                                                                 is_base_model=True)
+
         self.start_iter = 0
         self.max_iter = cfg.SOLVER.MAX_ITER
         self.cfg = cfg
@@ -294,7 +300,6 @@ class DefaultTrainer(SimpleTrainer):
             logger = logging.getLogger(__name__)
             logger.info('Loading the weights to base model for distillation.')
             self.base_model_checkpointer.resume_or_load(self.cfg.MODEL.WEIGHTS, resume=True)
-            self.model.set_base_model(self.base_model)
 
     def build_hooks(self):
         """

@@ -16,6 +16,7 @@ from ..matcher import Matcher
 from ..poolers import ROIPooler
 from ..proposal_generator.proposal_utils import add_ground_truth_to_proposals
 from ..sampling import subsample_labels
+from ..distillation_loss import roi_head_loss
 from .box_head import build_box_head
 from .fast_rcnn import FastRCNNOutputLayers, FastRCNNOutputs
 from .keypoint_head import build_keypoint_head, keypoint_rcnn_inference, keypoint_rcnn_loss
@@ -358,6 +359,7 @@ class Res5ROIHeads(ROIHeads):
         logging.getLogger(__name__).info("Invalid class range: " + str(self.invalid_class_range))
 
         self.base_model = None
+        self.enable_roi_distillation = cfg.DISTILL.ROI_HEADS
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -430,6 +432,12 @@ class Res5ROIHeads(ROIHeads):
         if self.training:
             del features
             losses = outputs.losses()
+
+            if self.base_model is not None and self.enable_roi_distillation:
+                prev_pred_class_logits, prev_pred_proposal_deltas = self.base_model.roi_heads.get_predictions_from_boxes(boxes)
+                roi_dist_loss = roi_head_loss(pred_class_logits, pred_proposal_deltas, prev_pred_class_logits, prev_pred_proposal_deltas)
+                losses.update(roi_dist_loss)
+
             if self.mask_on:
                 proposals, fg_selection_masks = select_foreground_proposals(
                     proposals, self.num_classes

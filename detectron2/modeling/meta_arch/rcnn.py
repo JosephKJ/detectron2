@@ -13,6 +13,7 @@ from ..backbone import build_backbone
 from ..postprocessing import detector_postprocess
 from ..proposal_generator import build_proposal_generator
 from ..roi_heads import build_roi_heads
+from ..distillation_loss import backbone_loss
 from .build import META_ARCH_REGISTRY
 
 __all__ = ["GeneralizedRCNN", "ProposalNetwork"]
@@ -44,6 +45,7 @@ class GeneralizedRCNN(nn.Module):
         pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).to(self.device).view(num_channels, 1, 1)
         self.normalizer = lambda x: (x - pixel_mean) / pixel_std
         self.to(self.device)
+        self.enable_backbone_distillation = cfg.DISTILL.BACKBONE
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -126,7 +128,10 @@ class GeneralizedRCNN(nn.Module):
             gt_instances = None
 
         features = self.backbone(images.tensor)
-        # prev_features = self.base_model.backbone(images.tensor)
+        backbone_dist_loss = 0
+        if self.base_model is not None and self.enable_backbone_distillation:
+            prev_features = self.base_model.backbone(images.tensor)
+            backbone_dist_loss = backbone_loss(features, prev_features)
 
         if self.proposal_generator:
             proposals, proposal_losses = self.proposal_generator(images, features, gt_instances)
@@ -144,6 +149,8 @@ class GeneralizedRCNN(nn.Module):
         losses = {}
         losses.update(detector_losses)
         losses.update(proposal_losses)
+        if self.base_model is not None and self.enable_backbone_distillation:
+            losses.update(backbone_dist_loss)
         return losses
 
     def inference(self, batched_inputs, detected_instances=None, do_postprocess=True):
