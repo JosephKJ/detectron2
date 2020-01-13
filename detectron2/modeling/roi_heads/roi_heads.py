@@ -349,13 +349,13 @@ class Res5ROIHeads(ROIHeads):
                 ShapeSpec(channels=out_channels, width=pooler_resolution, height=pooler_resolution),
             )
 
-        num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
-        num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
-        num_class = cfg.MODEL.ROI_HEADS.NUM_CLASSES
+        self.num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
+        self.num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
+        self.num_class = cfg.MODEL.ROI_HEADS.NUM_CLASSES
         if cfg.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES:
-            self.invalid_class_range = list(range(num_base_class, num_class))
+            self.invalid_class_range = list(range(self.num_base_class, self.num_class))
         else:
-            self.invalid_class_range = list(range(num_base_class + num_novel_class, num_class))
+            self.invalid_class_range = list(range(self.num_base_class + self.num_novel_class, self.num_class))
         logging.getLogger(__name__).info("Invalid class range: " + str(self.invalid_class_range))
 
         self.base_model = None
@@ -435,7 +435,9 @@ class Res5ROIHeads(ROIHeads):
 
             if self.base_model is not None and self.enable_roi_distillation:
                 prev_pred_class_logits, prev_pred_proposal_deltas = self.base_model.roi_heads.get_predictions_from_boxes(boxes)
-                roi_dist_loss = roi_head_loss(pred_class_logits, pred_proposal_deltas, prev_pred_class_logits, prev_pred_proposal_deltas)
+                roi_dist_loss = roi_head_loss(pred_class_logits[:, 0:self.num_base_class], pred_proposal_deltas,
+                                              prev_pred_class_logits[:, 0:self.num_base_class],
+                                              prev_pred_proposal_deltas)
                 losses.update(roi_dist_loss)
 
             if self.mask_on:

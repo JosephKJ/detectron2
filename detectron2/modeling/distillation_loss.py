@@ -28,10 +28,10 @@ def logit_distillation(current_logits, prev_logits, T=2.0):
 
 
 def anchor_delta_distillation(current_delta, prev_delta):
-    return smooth_l1_loss(current_delta, prev_delta, beta=0.1, reduction='mean')
-    # return F.mse_loss(current_delta, prev_delta)
+    # return smooth_l1_loss(current_delta, prev_delta, beta=0.1, reduction='mean')
+    return F.mse_loss(current_delta, prev_delta)
 
 
 def feature_distillation(features, prev_features):
-    return smooth_l1_loss(features, prev_features, beta=0.1, reduction='mean')
-    # return F.mse_loss(features, prev_features)
+    # return smooth_l1_loss(features, prev_features, beta=0.1, reduction='mean')
+    return F.mse_loss(features, prev_features)
