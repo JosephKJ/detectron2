@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+from fvcore.nn import smooth_l1_loss
 
 
 def rpn_loss(pred_objectness_logits, pred_anchor_deltas, prev_pred_objectness_logits, prev_pred_anchor_deltas):
@@ -22,13 +23,15 @@ def roi_head_loss(pred_class_logits, pred_proposal_deltas, prev_pred_class_logit
 def logit_distillation(current_logits, prev_logits, T=2.0):
     p = F.log_softmax(current_logits / T, dim=1)
     q = F.softmax(prev_logits / T, dim=1)
-    kl_div = torch.sum(F.kl_div(p, q, reduce=False).clamp(min=0.0) * (T**2)) / current_logits.shape[0]
+    kl_div = torch.sum(F.kl_div(p, q, reduction='none').clamp(min=0.0) * (T**2)) / current_logits.shape[0]
     return kl_div
 
 
 def anchor_delta_distillation(current_delta, prev_delta):
-    return F.mse_loss(current_delta, prev_delta)
+    return smooth_l1_loss(current_delta, prev_delta, beta=0.1, reduction='mean')
+    # return F.mse_loss(current_delta, prev_delta)
 
 
 def feature_distillation(features, prev_features):
-    return F.mse_loss(features, prev_features)
+    return smooth_l1_loss(features, prev_features, beta=0.1, reduction='mean')
+    # return F.mse_loss(features, prev_features)
