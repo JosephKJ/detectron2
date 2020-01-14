@@ -70,6 +70,11 @@ class StandardRPNHead(nn.Module):
             nn.init.normal_(l.weight, std=0.01)
             nn.init.constant_(l.bias, 0)
 
+    def freeze_layers(self):
+        for l in [self.conv, self.objectness_logits, self.anchor_deltas]:
+            for param in l.parameters():
+                param.requires_grad = False
+
     def forward(self, features):
         """
         Args:
@@ -125,6 +130,7 @@ class RPN(nn.Module):
 
         self.base_model = None
         self.enable_rpn_distill = cfg.DISTILL.RPN
+        self.freeze_weights = cfg.MODEL.RPN.FREEZE_WEIGHTS
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -146,6 +152,10 @@ class RPN(nn.Module):
         """
         gt_boxes = [x.gt_boxes for x in gt_instances] if gt_instances is not None else None
         del gt_instances
+
+        if self.freeze_weights:
+            self.rpn_head.freeze_layers()
+
         features = [features[f] for f in self.in_features]
         pred_objectness_logits, pred_anchor_deltas = self.rpn_head(features)
         anchors = self.anchor_generator(features)
