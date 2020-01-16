@@ -21,7 +21,7 @@ def roi_head_loss(pred_class_logits, pred_proposal_deltas, prev_pred_class_logit
     return {"loss_dist_roi_head": loss}
 
 
-def logit_distillation(current_logits, prev_logits, T=3.0):
+def logit_distillation(current_logits, prev_logits, T=5.0):
     p = F.log_softmax(current_logits / T, dim=1)
     q = F.softmax(prev_logits / T, dim=1)
     kl_div = torch.sum(F.kl_div(p, q, reduction='none').clamp(min=0.0) * (T**2)) / current_logits.shape[0]
