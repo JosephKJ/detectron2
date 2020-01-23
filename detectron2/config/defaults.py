@@ -601,3 +601,5 @@ _C.DISTILL.BACKBONE = False
 _C.DISTILL.RPN = False
 # Enable distilling the ROI Heads
 _C.DISTILL.ROI_HEADS = False
+# Distill only foreground ROIs
+_C.DISTILL.ONLY_FG_ROIS = False

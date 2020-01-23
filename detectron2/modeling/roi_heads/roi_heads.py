@@ -360,6 +360,7 @@ class Res5ROIHeads(ROIHeads):
 
         self.base_model = None
         self.enable_roi_distillation = cfg.DISTILL.ROI_HEADS
+        self.distill_only_fg_roi = cfg.DISTILL.ONLY_FG_ROIS
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -430,16 +431,26 @@ class Res5ROIHeads(ROIHeads):
         )
 
         if self.training:
-            del features
             losses = outputs.losses()
 
             if self.base_model is not None and self.enable_roi_distillation:
-                prev_pred_class_logits, prev_pred_proposal_deltas = self.base_model.roi_heads.get_predictions_from_boxes(boxes)
+                if self.distill_only_fg_roi:
+                    proposals_fg = [p[p.gt_classes != 20] for p in proposals]
+                    proposal_boxes_fg = [x.proposal_boxes for x in proposals_fg]
+                    boxes_fg = self._shared_roi_transform(
+                        [features[f] for f in self.in_features], proposal_boxes_fg
+                    )
+                    pred_class_logits, pred_proposal_deltas = self.get_predictions_from_boxes(boxes_fg)
+                    prev_pred_class_logits, prev_pred_proposal_deltas = self.base_model.roi_heads.\
+                        get_predictions_from_boxes(boxes_fg)
+                else:
+                    prev_pred_class_logits, prev_pred_proposal_deltas = self.base_model.roi_heads.\
+                        get_predictions_from_boxes(boxes)
                 roi_dist_loss = roi_head_loss(pred_class_logits[:, 0:self.num_base_class], pred_proposal_deltas,
                                               prev_pred_class_logits[:, 0:self.num_base_class],
                                               prev_pred_proposal_deltas)
                 losses.update(roi_dist_loss)
-
+            del features
             if self.mask_on:
                 proposals, fg_selection_masks = select_foreground_proposals(
                     proposals, self.num_classes
