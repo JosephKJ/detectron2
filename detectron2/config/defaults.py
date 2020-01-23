@@ -603,3 +603,5 @@ _C.DISTILL.RPN = False
 _C.DISTILL.ROI_HEADS = False
 # Distill only foreground ROIs
 _C.DISTILL.ONLY_FG_ROIS = False
+# (1-LOSS_WEIGHT) (CLF / REG loss) + (LOSS_WEIGHT) ROI-Distillation
+_C.DISTILL.LOSS_WEIGHT = 0.5

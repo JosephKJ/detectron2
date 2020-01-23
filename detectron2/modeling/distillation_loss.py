@@ -14,11 +14,11 @@ def backbone_loss(features, prev_features):
     return {"loss_dist_backbone": loss}
 
 
-def roi_head_loss(pred_class_logits, pred_proposal_deltas, prev_pred_class_logits, prev_pred_proposal_deltas):
+def roi_head_loss(pred_class_logits, pred_proposal_deltas, prev_pred_class_logits, prev_pred_proposal_deltas, dist_loss_weight=0.5):
     loss = logit_distillation(pred_class_logits, prev_pred_class_logits)
     # loss = feature_distillation(pred_class_logits, prev_pred_class_logits)
     loss += anchor_delta_distillation(pred_proposal_deltas, prev_pred_proposal_deltas)
-    return {"loss_dist_roi_head": loss}
+    return {"loss_dist_roi_head": dist_loss_weight * loss}
 
 
 def logit_distillation(current_logits, prev_logits, T=6.0):

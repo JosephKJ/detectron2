@@ -361,6 +361,7 @@ class Res5ROIHeads(ROIHeads):
         self.base_model = None
         self.enable_roi_distillation = cfg.DISTILL.ROI_HEADS
         self.distill_only_fg_roi = cfg.DISTILL.ONLY_FG_ROIS
+        self.dist_loss_weight = cfg.DISTILL.LOSS_WEIGHT
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -428,6 +429,7 @@ class Res5ROIHeads(ROIHeads):
             proposals,
             self.smooth_l1_beta,
             self.invalid_class_range,
+            self.dist_loss_weight,
         )
 
         if self.training:
@@ -448,7 +450,7 @@ class Res5ROIHeads(ROIHeads):
                         get_predictions_from_boxes(boxes)
                 roi_dist_loss = roi_head_loss(pred_class_logits[:, 0:self.num_base_class], pred_proposal_deltas,
                                               prev_pred_class_logits[:, 0:self.num_base_class],
-                                              prev_pred_proposal_deltas)
+                                              prev_pred_proposal_deltas, self.dist_loss_weight)
                 losses.update(roi_dist_loss)
             del features
             if self.mask_on:
