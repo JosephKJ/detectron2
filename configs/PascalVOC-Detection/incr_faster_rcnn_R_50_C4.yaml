@@ -3,7 +3,7 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_2/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_4/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
