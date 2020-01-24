@@ -56,5 +56,7 @@ def build_lr_scheduler(
             warmup_iters=cfg.SOLVER.WARMUP_ITERS,
             warmup_method=cfg.SOLVER.WARMUP_METHOD,
         )
+    elif name == "ReduceLROnPlateau":
+        return torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
     else:
         raise ValueError("Unknown LR scheduler: {}".format(name))
