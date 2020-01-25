@@ -2,8 +2,8 @@ _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -31,8 +31,8 @@ SOLVER:
   STEPS: (3000, 4000) # 21000, 22000
   MAX_ITER: 22500  # 17.4 epochs -> 18000 iterations 4500,
   WARMUP_ITERS: 20 # 100
-  LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau
-OUTPUT_DIR: ./output/LOSS_WEIGHT_0_1
+  LR_SCHEDULER_NAME: ReduceLROnPlateau # ReduceLROnPlateau WarmupMultiStepLR
+OUTPUT_DIR: ./output/ReduceLROnPlateau
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: True
