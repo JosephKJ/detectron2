@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from fvcore.nn import smooth_l1_loss
+from detectron2.distiller_zoo import *
 
 
 def rpn_loss(pred_objectness_logits, pred_anchor_deltas, prev_pred_objectness_logits, prev_pred_anchor_deltas):
@@ -35,4 +36,11 @@ def anchor_delta_distillation(current_delta, prev_delta):
 
 def feature_distillation(features, prev_features):
     # return smooth_l1_loss(features, prev_features, beta=0.1, reduction='mean')
-    return F.mse_loss(features, prev_features)
+    # return F.mse_loss(features, prev_features)
+    criterion_kd = Attention()
+    # criterion_kd = NSTLoss()
+    # criterion_kd = DistillKL(T=4)
+    # criterion_kd = FactorTransfer()
+    loss = criterion_kd(features, prev_features)
+    loss = torch.stack(loss, dim=0).sum()
+    return loss
