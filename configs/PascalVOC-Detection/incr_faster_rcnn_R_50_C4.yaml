@@ -40,7 +40,7 @@ SOLVER:
 OUTPUT_DIR: ./output/base_15 # NMS_THRESH_TEST_0_3_mb_16_full
 VIS_PERIOD: 4000
 DISTILL:
-  ENABLE: True
+  ENABLE: False
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
