@@ -1,9 +1,9 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
-  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/NMS_THRESH_TEST_0_3_mb_16_full/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/weight_0_3/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -11,9 +11,9 @@ MODEL:
     # Maximum number of foreground classes to expect
     NUM_CLASSES: 20
     # Flag to turn on/off Incremental Learning
-    LEARN_INCREMENTALLY: True
+    LEARN_INCREMENTALLY: False
     # Flag to select whether to learn base classes or new expanded classes
-    TRAIN_ON_BASE_CLASSES: True
+    TRAIN_ON_BASE_CLASSES: False
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
     NUM_BASE_CLASSES: 15
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
@@ -37,7 +37,7 @@ SOLVER:
   MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/base_15 # NMS_THRESH_TEST_0_3_mb_16_full
+OUTPUT_DIR: ./output/weight_0_3 # base_15
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: False
