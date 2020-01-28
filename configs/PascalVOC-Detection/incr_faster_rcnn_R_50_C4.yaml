@@ -19,7 +19,7 @@ MODEL:
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
     NUM_NOVEL_CLASSES: 5
     POSITIVE_FRACTION: 0.25
-    NMS_THRESH_TEST: 0.3
+    NMS_THRESH_TEST: 0.1
   RPN:
     FREEZE_WEIGHTS: False
 INPUT:
@@ -37,7 +37,7 @@ SOLVER:
 #  MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/weight_0_9 # base_15
+OUTPUT_DIR: ./output/weight_0_9_nms_0_1 # base_15
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: True
