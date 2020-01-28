@@ -37,7 +37,7 @@ SOLVER:
 #  MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/weight_0_5 # base_15
+OUTPUT_DIR: ./output/weight_0_7 # base_15
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: True
@@ -46,4 +46,4 @@ DISTILL:
   ROI_HEADS: True
   ONLY_FG_ROIS: False
   # (1-LOSS_WEIGHT) (CLF / REG loss) + (LOSS_WEIGHT) ROI-Distillation
-  LOSS_WEIGHT: 0.5
+  LOSS_WEIGHT: 0.7
