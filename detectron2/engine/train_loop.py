@@ -225,6 +225,18 @@ class SimpleTrainer(TrainerBase):
         losses.backward()
 
         """
+        If WARPing is enabled, flush out the gradients accordingly.
+        """
+        if self.cfg.WG.ENABLE:
+            for name, param in self.model.named_parameters():
+                if self.cfg.WG.TRAIN_WARP:
+                    if name not in self.cfg.WG.WARP_LAYERS:
+                        param.grad.fill_(0)
+                else:
+                    if name in self.cfg.WG.WARP_LAYERS:
+                        param.grad.fill_(0)
+
+        """
         If you need gradient clipping/scaling or other processing, you can
         wrap the optimizer with your custom `step()` method.
         """

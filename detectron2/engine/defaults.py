@@ -299,7 +299,7 @@ class DefaultTrainer(SimpleTrainer):
         if self.enable_distillation:
             logger = logging.getLogger(__name__)
             logger.info('Loading the weights to base model for distillation.')
-            self.base_model_checkpointer.resume_or_load(self.cfg.MODEL.WEIGHTS, resume=True)
+            self.base_model_checkpointer.resume_or_load(self.cfg.MODEL.BASE_WEIGHTS, resume=True)
 
     def build_hooks(self):
         """

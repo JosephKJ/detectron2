@@ -2,8 +2,10 @@ _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/weight_0_7_non_convex/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/weight_0_7/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/weight_0_7/model_0034999.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -19,7 +21,7 @@ MODEL:
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
     NUM_NOVEL_CLASSES: 5
     POSITIVE_FRACTION: 0.25
-    NMS_THRESH_TEST: 0.1
+    NMS_THRESH_TEST: 0.3
   RPN:
     FREEZE_WEIGHTS: False
 INPUT:
@@ -32,12 +34,12 @@ SOLVER:
 #  STEPS: (3000, 4000) # 21000, 22000
 #  MAX_ITER: 22500  # 17.4 epochs -> 18000 iterations 4500,
   STEPS: (30000, 34000) # 21000, 22000
-  MAX_ITER: 36000  # 17.4 epochs -> 18000 iterations 4500,
+  MAX_ITER: 56000  # 36000
 #  STEPS: (12000, 16000)
 #  MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/weight_0_9_nms_0_1 # base_15
+OUTPUT_DIR: ./output/val_0_7_training_further #e val_0_7_training_further
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: True
@@ -46,4 +48,8 @@ DISTILL:
   ROI_HEADS: True
   ONLY_FG_ROIS: False
   # (1-LOSS_WEIGHT) (CLF / REG loss) + (LOSS_WEIGHT) ROI-Distillation
-  LOSS_WEIGHT: 0.9
+  LOSS_WEIGHT: 0.7
+WG:
+  ENABLE: True
+  TRAIN_WARP: False
+  WARP_LAYERS: ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv2.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv2.weight", "module.roi_heads.res5.2.conv3.weight")

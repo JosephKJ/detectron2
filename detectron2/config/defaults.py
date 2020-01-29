@@ -29,6 +29,7 @@ _C.MODEL.META_ARCHITECTURE = "GeneralizedRCNN"
 # Path (possibly with schema like catalog:// or detectron2://) to a checkpoint file
 # to be loaded to the model. You can find available models in the model zoo.
 _C.MODEL.WEIGHTS = ""
+_C.MODEL.BASE_WEIGHTS = ""
 
 # Values to be used for image normalization (BGR order).
 # To train on images of different number of channels, just set different mean & std.
@@ -605,3 +606,11 @@ _C.DISTILL.ROI_HEADS = False
 _C.DISTILL.ONLY_FG_ROIS = False
 # (1-LOSS_WEIGHT) (CLF / REG loss) + (LOSS_WEIGHT) ROI-Distillation
 _C.DISTILL.LOSS_WEIGHT = 0.5
+
+# ---------------------------------------------------------------------------- #
+# WarpGrad
+# ---------------------------------------------------------------------------- #
+_C.WG = CN()
+_C.WG.ENABLE = False
+_C.WG.TRAIN_WARP = False
+_C.WG.WARP_LAYERS = ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv2.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv2.weight", "module.roi_heads.res5.2.conv3.weight")
