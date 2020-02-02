@@ -619,4 +619,4 @@ _C.WG.WARP_LAYERS = ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.r
 # Finetune the model
 # ---------------------------------------------------------------------------- #
 _C.FINETUNE = CN()
-_C.FINETUNE.MIN_NUM_IMG_PER_CLASS = 10
+_C.FINETUNE.MIN_NUM_IMG_PER_CLASS = -1  # negative value means no finetuning.
