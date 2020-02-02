@@ -614,3 +614,9 @@ _C.WG = CN()
 _C.WG.ENABLE = False
 _C.WG.TRAIN_WARP = False
 _C.WG.WARP_LAYERS = ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv2.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv2.weight", "module.roi_heads.res5.2.conv3.weight")
+
+# ---------------------------------------------------------------------------- #
+# Finetune the model
+# ---------------------------------------------------------------------------- #
+_C.FINETUNE = CN()
+_C.FINETUNE.MIN_NUM_IMG_PER_CLASS = 10

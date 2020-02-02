@@ -7,6 +7,7 @@ import numpy as np
 import operator
 import pickle
 import torch.utils.data
+import random
 from fvcore.common.file_io import PathManager
 from tabulate import tabulate
 from termcolor import colored
@@ -231,8 +232,35 @@ def filter_images_with_class(dataset_dicts, cfg):
     return dataset_dicts
 
 
+def get_finetune_data(cfg, dataset_dicts, verbose=False):
+    dataset_dicts_filtered = []
+    num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
+    num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
+    num_num_img_per_class = cfg.FINETUNE.MIN_NUM_IMG_PER_CLASS
+
+    # Randomly Shuffle the images
+    random.shuffle(dataset_dicts)
+
+    for class_index in range(0, num_base_class + num_novel_class):
+        img_count = 0
+        for image_data in dataset_dicts:
+            annos = image_data["annotations"]
+            for annotation in annos:
+                if class_index == annotation["category_id"]:
+                    dataset_dicts_filtered.append(image_data)
+                    dataset_dicts.remove(image_data)
+                    img_count += 1
+                    break
+            if img_count >= num_num_img_per_class:
+                break
+        if verbose:
+            print(str(class_index) + ' --> '+ str(len(dataset_dicts_filtered)))
+
+    return dataset_dicts_filtered
+
+
 def get_detection_dataset_dicts(
-    dataset_names, filter_empty=True, min_keypoints=0, proposal_files=None, cfg=None
+    dataset_names, filter_empty=True, min_keypoints=0, proposal_files=None, cfg=None, test=False
 ):
     """
     Load and prepare dataset dicts for instance detection/segmentation and semantic segmentation.
@@ -274,7 +302,11 @@ def get_detection_dataset_dicts(
             check_metadata_consistency("thing_classes", dataset_names)
             print_instances_class_histogram(dataset_dicts, class_names)
 
-            dataset_dicts = filter_images_with_class(dataset_dicts, cfg)
+            if cfg.FINETUNE.MIN_NUM_IMG_PER_CLASS > 0:
+                if not test:
+                    dataset_dicts = get_finetune_data(cfg, dataset_dicts)
+            else:
+                dataset_dicts = filter_images_with_class(dataset_dicts, cfg)
             print_instances_class_histogram(dataset_dicts, class_names)
         except AttributeError:  # class names are not available for this dataset
             pass
@@ -390,7 +422,8 @@ def build_detection_test_loader(cfg, dataset_name, mapper=None):
         ]
         if cfg.MODEL.LOAD_PROPOSALS
         else None,
-        cfg=cfg
+        cfg=cfg,
+        test=True
     )
 
     dataset = DatasetFromList(dataset_dicts)
