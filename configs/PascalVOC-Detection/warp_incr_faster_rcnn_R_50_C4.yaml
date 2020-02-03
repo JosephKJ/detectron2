@@ -39,7 +39,7 @@ SOLVER:
   MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/base_warped_first_block_only
+OUTPUT_DIR: ./output/base_warped_only_conv3_all_three_layers
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: False
@@ -53,5 +53,11 @@ DISTILL:
 WG:
   ENABLE: True
   TRAIN_WARP: False
-  WARP_LAYERS: ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight")
-#  WARP_LAYERS: ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv2.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv2.weight", "module.roi_heads.res5.2.conv3.weight")
+  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
+#  WARP_LAYERS: (
+#  "module.roi_heads.res5.0.conv2.weight",
+#  "module.roi_heads.res5.0.conv3.weight",
+#  "module.roi_heads.res5.1.conv2.weight",
+#  "module.roi_heads.res5.1.conv3.weight",
+#  "module.roi_heads.res5.2.conv2.weight",
+#  "module.roi_heads.res5.2.conv3.weight")
