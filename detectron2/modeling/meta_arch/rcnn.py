@@ -8,6 +8,7 @@ from detectron2.structures import ImageList
 from detectron2.utils.events import get_event_storage
 from detectron2.utils.logger import log_first_n
 from detectron2.utils.visualizer import Visualizer
+from detectron2.utils.store import Store
 
 from ..backbone import build_backbone
 from ..postprocessing import detector_postprocess
@@ -31,10 +32,12 @@ class GeneralizedRCNN(nn.Module):
     def __init__(self, cfg):
         super().__init__()
 
+        self.feature_store = Store(cfg.MODEL.ROI_HEADS.NUM_CLASSES,
+                                   cfg.WG.NUM_FEATURES_PER_CLASS) if cfg.WG.ENABLE else None
         self.device = torch.device(cfg.MODEL.DEVICE)
         self.backbone = build_backbone(cfg)
         self.proposal_generator = build_proposal_generator(cfg, self.backbone.output_shape())
-        self.roi_heads = build_roi_heads(cfg, self.backbone.output_shape())
+        self.roi_heads = build_roi_heads(cfg, self.backbone.output_shape(), self.feature_store)
         self.vis_period = cfg.VIS_PERIOD
         self.input_format = cfg.INPUT.FORMAT
         self.base_model = None
@@ -46,6 +49,8 @@ class GeneralizedRCNN(nn.Module):
         self.normalizer = lambda x: (x - pixel_mean) / pixel_std
         self.to(self.device)
         self.enable_backbone_distillation = cfg.DISTILL.BACKBONE
+        self.enable_warp_grad = cfg.WG.ENABLE
+        self.cfg = cfg
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -149,8 +154,14 @@ class GeneralizedRCNN(nn.Module):
         losses = {}
         losses.update(detector_losses)
         losses.update(proposal_losses)
+
         if self.base_model is not None and self.enable_backbone_distillation:
             losses.update(backbone_dist_loss)
+
+        if self.enable_warp_grad and self.cfg.WG.TRAIN_WARP:
+            warp_loss = self.roi_heads.get_warp_loss()
+            losses.update(warp_loss)
+
         return losses
 
     def inference(self, batched_inputs, detected_instances=None, do_postprocess=True):

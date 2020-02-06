@@ -200,47 +200,50 @@ class SimpleTrainer(TrainerBase):
         """
         assert self.model.training, "[SimpleTrainer] model was changed to eval mode!"
         start = time.perf_counter()
-        """
-        If your want to do something with the data, you can wrap the dataloader.
-        """
+
+        if (self.iter + 1) % self.cfg.WG.TRAIN_WARP_AT_ITR_NO == 0 and self.cfg.WG.ENABLE:
+            self.cfg.WG.TRAIN_WARP = True
+
         data = next(self._data_loader_iter)
         data_time = time.perf_counter() - start
 
-        """
-        If your want to do something with the losses, you can wrap the model.
-        """
         loss_dict = self.model(data)
-        losses = sum(loss for loss in loss_dict.values())
-        self._detect_anomaly(losses, loss_dict)
 
         metrics_dict = loss_dict
         metrics_dict["data_time"] = data_time
         self._write_metrics(metrics_dict)
 
-        """
-        If you need accumulate gradients or something similar, you can
-        wrap the optimizer with your custom `zero_grad()` method.
-        """
-        self.optimizer.zero_grad()
-        losses.backward()
+        warp_loss = None
+        if self.cfg.WG.ENABLE and self.cfg.WG.TRAIN_WARP:
+            cls_wrp = loss_dict.pop('loss_cls_warp')
+            reg_wrp = loss_dict.pop('loss_box_reg_warp')
+            warp_loss = cls_wrp + reg_wrp
+            self._detect_anomaly(warp_loss, loss_dict)
 
-        """
-        If WARPing is enabled, flush out the gradients accordingly.
-        """
+        task_loss = sum(loss for loss in loss_dict.values())
+        self._detect_anomaly(task_loss, loss_dict)
+
         if self.cfg.WG.ENABLE:
+            # Update task parameters on the task loss
+            self.optimizer.zero_grad()
+            task_loss.backward()
             for name, param in self.model.named_parameters():
-                if self.cfg.WG.TRAIN_WARP:
-                    if name not in self.cfg.WG.WARP_LAYERS:
+                if name in self.cfg.WG.WARP_LAYERS:
                         param.grad.fill_(0)
-                else:
-                    if name in self.cfg.WG.WARP_LAYERS:
-                        param.grad.fill_(0)
+            self.optimizer.step()
 
-        """
-        If you need gradient clipping/scaling or other processing, you can
-        wrap the optimizer with your custom `step()` method.
-        """
-        self.optimizer.step()
+            # If warp update step, zero out all other gradients and update warp layers
+            if self.cfg.WG.TRAIN_WARP:
+                self.optimizer.zero_grad()
+                warp_loss.backward()
+                for name, param in self.model.named_parameters():
+                    if name not in self.cfg.WG.WARP_LAYERS and param.grad is not None:
+                        param.grad.fill_(0)
+                self.optimizer.step()
+        else:
+            self.optimizer.zero_grad()
+            task_loss.backward()
+            self.optimizer.step()
 
     def _detect_anomaly(self, losses, loss_dict):
         if not torch.isfinite(losses).all():

@@ -35,12 +35,12 @@ The call is expected to return an :class:`ROIHeads`.
 logger = logging.getLogger(__name__)
 
 
-def build_roi_heads(cfg, input_shape):
+def build_roi_heads(cfg, input_shape, feature_store=None):
     """
     Build ROIHeads defined by `cfg.MODEL.ROI_HEADS.NAME`.
     """
     name = cfg.MODEL.ROI_HEADS.NAME
-    return ROI_HEADS_REGISTRY.get(name)(cfg, input_shape)
+    return ROI_HEADS_REGISTRY.get(name)(cfg, input_shape, feature_store)
 
 
 def select_foreground_proposals(proposals, bg_label):
@@ -317,7 +317,7 @@ class Res5ROIHeads(ROIHeads):
     the per-region feature computation by a Res5 block.
     """
 
-    def __init__(self, cfg, input_shape):
+    def __init__(self, cfg, input_shape, feature_store=None):
         super().__init__(cfg, input_shape)
 
         assert len(self.in_features) == 1
@@ -337,6 +337,9 @@ class Res5ROIHeads(ROIHeads):
             sampling_ratio=sampling_ratio,
             pooler_type=pooler_type,
         )
+
+        self.feature_store = feature_store
+        self.enable_warp_grad = cfg.WG.ENABLE
 
         self.res5, out_channels = self._build_res5_block(cfg)
         self.box_predictor = FastRCNNOutputLayers(
@@ -403,6 +406,60 @@ class Res5ROIHeads(ROIHeads):
         del feature_pooled
         return pred_class_logits, pred_proposal_deltas
 
+    def get_warp_loss(self):
+        """
+        Steps:
+            1) Retrieve from features and proposals
+            2) Compute the losses
+        :return:
+        """
+        features = []
+        proposals = []
+        for feats, props in self.feature_store.retrieve():
+            features.append(feats)
+            proposals.append(props)
+
+        roi_pooled_features = torch.cat(features, dim=0)
+        proposals_with_gt = [Instances.cat(proposals, ignore_dim_change=True)]
+
+        pred_class_logits, pred_proposal_deltas = self.get_predictions_from_boxes(roi_pooled_features)
+        outputs = FastRCNNOutputs(
+            self.box2box_transform,
+            pred_class_logits,
+            pred_proposal_deltas,
+            proposals_with_gt,
+            self.smooth_l1_beta,
+            self.invalid_class_range,
+            self.dist_loss_weight,
+        )
+        losses = outputs.losses()
+        losses["loss_cls_warp"] = losses.pop("loss_cls")
+        losses["loss_box_reg_warp"] = losses.pop("loss_box_reg")
+        return losses
+
+    def update_feature_store(self, proposals, features, verbose=False):
+        """
+        Feature store is used to update the warp layers of the ROI Heads.
+        Steps:
+            1) 'proposals' is filtered per class
+            2) The following are done: proposals -> features from BB -> ROI Pooled features
+            3) Update the Feature Store
+        :param proposals: Proposals from the RPN per image.
+        :param features: The backbone feature map.
+        :return: None; updates self.feature_store.
+        """
+        for image_id, proposals_per_image in enumerate(proposals):
+            for i in range(len(proposals_per_image)):
+                proposal = proposals_per_image[i]
+                class_id = proposal.gt_classes.item()
+                if class_id != self.num_class:
+                    roi_pooled_features = self._shared_roi_transform([features[f][image_id].unsqueeze(0).detach() for f in self.in_features]
+                                                                     , [proposal.proposal_boxes])
+                    self.feature_store.add(((roi_pooled_features, proposal),), (class_id,))
+
+        if verbose:
+            print(self.feature_store)
+
     def forward(self, images, features, proposals, targets=None):
         """
         See :class:`ROIHeads.forward`.
@@ -413,7 +470,11 @@ class Res5ROIHeads(ROIHeads):
             proposals = self.label_and_sample_proposals(proposals, targets)
         del targets
 
+        if self.enable_warp_grad:
+            self.update_feature_store(proposals, features)
+
         proposal_boxes = [x.proposal_boxes for x in proposals]
+        # 'boxes' contains the RIO-Pooled features.
         boxes = self._shared_roi_transform(
             [features[f] for f in self.in_features], proposal_boxes
         )
@@ -511,7 +572,7 @@ class StandardROIHeads(ROIHeads):
     :meth:`forward()` or a head.
     """
 
-    def __init__(self, cfg, input_shape):
+    def __init__(self, cfg, input_shape, feature_store=None):
         super(StandardROIHeads, self).__init__(cfg, input_shape)
         self._init_box_head(cfg)
         self._init_mask_head(cfg)

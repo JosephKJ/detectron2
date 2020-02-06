@@ -613,7 +613,9 @@ _C.DISTILL.LOSS_WEIGHT = 0.5
 _C.WG = CN()
 _C.WG.ENABLE = False
 _C.WG.TRAIN_WARP = False
+_C.WG.TRAIN_WARP_AT_ITR_NO = 10
 _C.WG.WARP_LAYERS = ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv2.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv2.weight", "module.roi_heads.res5.2.conv3.weight")
+_C.WG.NUM_FEATURES_PER_CLASS = 100
 
 # ---------------------------------------------------------------------------- #
 # Finetune the model

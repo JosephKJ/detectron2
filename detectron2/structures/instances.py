@@ -68,7 +68,11 @@ class Instances:
         The length of `value` must be the number of instances,
         and must agree with other existing fields in this object.
         """
-        data_len = len(value)
+        try:
+            data_len = len(value)
+        except Exception as e:
+            data_len = len(value.unsqueeze_(dim=0))
+
         if len(self._fields):
             assert (
                 len(self) == data_len
@@ -139,7 +143,7 @@ class Instances:
         raise NotImplementedError("`Instances` object is not iterable!")
 
     @staticmethod
-    def cat(instance_lists: List["Instances"]) -> "Instances":
+    def cat(instance_lists: List["Instances"], ignore_dim_change=False) -> "Instances":
         """
         Args:
             instance_lists (list[Instances])
@@ -153,8 +157,9 @@ class Instances:
             return instance_lists[0]
 
         image_size = instance_lists[0].image_size
-        for i in instance_lists[1:]:
-            assert i.image_size == image_size
+        if not ignore_dim_change:
+            for i in instance_lists[1:]:
+                assert i.image_size == image_size
         ret = Instances(image_size)
         for k in instance_lists[0]._fields.keys():
             values = [i.get(k) for i in instance_lists]
