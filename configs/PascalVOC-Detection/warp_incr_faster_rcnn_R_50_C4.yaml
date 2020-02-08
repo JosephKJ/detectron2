@@ -5,6 +5,7 @@ MODEL:
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/warp/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0054999.pth"
   MASK_ON: False
   RESNETS:
@@ -41,7 +42,7 @@ SOLVER:
   MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/warp
+OUTPUT_DIR: ./output/warp_2_conv3
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: False
@@ -56,7 +57,8 @@ WG:
   ENABLE: True
   TRAIN_WARP: False
   TRAIN_WARP_AT_ITR_NO: 20
-  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
+  WARP_LAYERS: ("module.roi_heads.res5.2.conv3.weight",)
+#  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
   NUM_FEATURES_PER_CLASS: 100
 #  WARP_LAYERS: (
 #  "module.roi_heads.res5.0.conv2.weight",

@@ -470,7 +470,7 @@ class Res5ROIHeads(ROIHeads):
             proposals = self.label_and_sample_proposals(proposals, targets)
         del targets
 
-        if self.enable_warp_grad:
+        if self.training and self.enable_warp_grad:
             self.update_feature_store(proposals, features)
 
         proposal_boxes = [x.proposal_boxes for x in proposals]
