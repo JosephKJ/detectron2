@@ -1,11 +1,11 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
-  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-#  BASE_WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/warp/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/test1/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/test1/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/warp_2_conv3/model_0004999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0054999.pth"
   MASK_ON: False
   RESNETS:
@@ -16,7 +16,7 @@ MODEL:
     # Flag to turn on/off Incremental Learning
     LEARN_INCREMENTALLY: True
     # Flag to select whether to learn base classes or new expanded classes
-    TRAIN_ON_BASE_CLASSES: True
+    TRAIN_ON_BASE_CLASSES: False
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
     NUM_BASE_CLASSES: 15
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
@@ -42,10 +42,11 @@ SOLVER:
   MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/warp_2_conv3_iter_5
+OUTPUT_DIR: ./output/wg_dist_next_5
+#OUTPUT_DIR: ./output/warp_2_conv3_iter_20_num_feat_100
 VIS_PERIOD: 4000
 DISTILL:
-  ENABLE: False
+  ENABLE: True
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
@@ -55,8 +56,7 @@ DISTILL:
 # Warp Grad
 WG:
   ENABLE: True
-  TRAIN_WARP: False
-  TRAIN_WARP_AT_ITR_NO: 5
+  TRAIN_WARP_AT_ITR_NO: 20
   WARP_LAYERS: ("module.roi_heads.res5.2.conv3.weight",)
 #  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
   NUM_FEATURES_PER_CLASS: 100
@@ -67,3 +67,4 @@ WG:
 #  "module.roi_heads.res5.1.conv3.weight",
 #  "module.roi_heads.res5.2.conv2.weight",
 #  "module.roi_heads.res5.2.conv3.weight")
+SEED: 16611450

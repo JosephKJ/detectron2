@@ -437,26 +437,23 @@ class Res5ROIHeads(ROIHeads):
         losses["loss_box_reg_warp"] = losses.pop("loss_box_reg")
         return losses
 
-    def update_feature_store(self, proposals, features, verbose=False):
+    def update_feature_store(self, proposals, roi_pooled_features, verbose=False):
         """
-        Feature store is used to update the warp layers of the ROI Heads.
+        Feature store (FS) is used to update the warp layers of the ROI Heads. Updating FS involves the following
         Steps:
-            1) 'proposals' is filtered per class
-            2) The following are done: proposals -> features from BB -> ROI Pooled features
+            1) 'proposals' are filtered per class
+            2) The following is done: proposals -> features from BB -> ROI Pooled features
             3) Update the Feature Store
         :param proposals: Proposals from the RPN per image.
         :param features: The backbone feature map.
         :return: None; updates self.feature_store.
         """
-        for image_id, proposals_per_image in enumerate(proposals):
-            for i in range(len(proposals_per_image)):
-                proposal = proposals_per_image[i]
-                class_id = proposal.gt_classes.item()
-                if class_id != self.num_class:
-                    roi_pooled_features = self._shared_roi_transform([features[f][image_id].unsqueeze(0).detach() for f in self.in_features]
-                                                                     , [proposal.proposal_boxes])
-                    self.feature_store.add(((roi_pooled_features, proposal),), (class_id,))
-
+        all_proposals = Instances.cat(proposals, ignore_dim_change=True)
+        for i in range(len(all_proposals)):
+            proposal = all_proposals[i]
+            class_id = proposal.gt_classes.item()
+            if class_id != self.num_class:
+                self.feature_store.add(((roi_pooled_features[i].unsqueeze(0).clone().detach(), proposal),), (class_id,))
         if verbose:
             print(self.feature_store)
 
@@ -470,14 +467,15 @@ class Res5ROIHeads(ROIHeads):
             proposals = self.label_and_sample_proposals(proposals, targets)
         del targets
 
-        if self.training and self.enable_warp_grad:
-            self.update_feature_store(proposals, features)
-
         proposal_boxes = [x.proposal_boxes for x in proposals]
         # 'boxes' contains the RIO-Pooled features.
         boxes = self._shared_roi_transform(
             [features[f] for f in self.in_features], proposal_boxes
         )
+
+        if self.training and self.enable_warp_grad:
+            self.update_feature_store(proposals, boxes)
+
         box_features = self.res5(boxes)
         feature_pooled = box_features.mean(dim=[2, 3])  # pooled to 1x1
         pred_class_logits, pred_proposal_deltas = self.box_predictor(feature_pooled)

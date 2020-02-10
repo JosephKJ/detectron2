@@ -29,9 +29,13 @@ class Store:
     def __repr__(self):
         return self.__str__()
 
+    def __len__(self):
+        return sum([len(s) for s in self.store])
+
+
 if __name__ == "__main__":
     store = Store(10, 3)
     store.add(('a', 'b', 'c', 'd', 'e', 'f'), (1, 1, 9, 1, 0, 1))
     store.add(('h',), (4,))
     print(store.retrieve())
-    print(store)
+    print(len(store))
