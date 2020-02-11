@@ -254,7 +254,7 @@ def get_finetune_data(cfg, dataset_dicts, verbose=False):
             if img_count >= num_num_img_per_class:
                 break
         if verbose:
-            print(str(class_index) + ' --> '+ str(len(dataset_dicts_filtered)))
+            print(str(class_index) + ' --> ' + str(len(dataset_dicts_filtered)))
 
     return dataset_dicts_filtered
 
