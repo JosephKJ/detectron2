@@ -46,7 +46,7 @@ OUTPUT_DIR: ./output/warp_base
 #OUTPUT_DIR: ./output/warp_2_conv3_iter_20_num_feat_100
 VIS_PERIOD: 17000
 DISTILL:
-  ENABLE: True
+  ENABLE: False
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
