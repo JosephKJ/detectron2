@@ -5,7 +5,8 @@ MODEL:
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
   BASE_WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0044999.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0044999.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/wg_dist_next_5/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
