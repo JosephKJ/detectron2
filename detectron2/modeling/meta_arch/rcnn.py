@@ -32,7 +32,7 @@ class GeneralizedRCNN(nn.Module):
     def __init__(self, cfg):
         super().__init__()
 
-        self.feature_store = Store(cfg.MODEL.ROI_HEADS.NUM_CLASSES,
+        self.feature_store = Store(cfg.MODEL.ROI_HEADS.NUM_CLASSES+1,
                                    cfg.WG.NUM_FEATURES_PER_CLASS) if cfg.WG.ENABLE else None
         self.device = torch.device(cfg.MODEL.DEVICE)
         self.backbone = build_backbone(cfg)
@@ -95,6 +95,34 @@ class GeneralizedRCNN(nn.Module):
             vis_name = " 1. GT bounding boxes  2. Predicted proposals"
             storage.put_image(vis_name, vis_img)
 
+    def get_warp_loss(self, all_images_in_store):
+        """
+
+        :param batched_inputs: Contains all the images in the Image Store
+        :return:
+        """
+        for image in all_images_in_store:
+            img = self.preprocess_image([image])
+
+            if 'instances' in image:
+                gt_instances = [image['instances'].to(self.device)]
+            elif 'targets' in image:
+                gt_instances = [image['targets'].to(self.device)]
+            else:
+                gt_instances = None
+
+            features = self.backbone(img.tensor)
+            proposals, _ = self.proposal_generator(img, features, gt_instances)
+            # self.roi_heads.update_feature_store(features, proposals, gt_instances)
+            _, detector_losses = self.roi_heads(img, features, proposals, gt_instances)
+
+        # warp_losses = self.roi_heads.get_warp_loss()
+        self.feature_store.reset()
+
+        losses = {}
+        losses.update(detector_losses)
+        return losses
+
     def forward(self, batched_inputs):
         """
         Args:
@@ -120,6 +148,9 @@ class GeneralizedRCNN(nn.Module):
         """
         if not self.training:
             return self.inference(batched_inputs)
+
+        if self.cfg.WG.TRAIN_WARP and self.cfg.WG.USE_FEATURE_STORE:
+            return self.get_warp_loss(batched_inputs)
 
         images = self.preprocess_image(batched_inputs)
         if "instances" in batched_inputs[0]:
@@ -157,10 +188,6 @@ class GeneralizedRCNN(nn.Module):
 
         if self.base_model is not None and self.enable_backbone_distillation:
             losses.update(backbone_dist_loss)
-
-        if self.enable_warp_grad and self.cfg.WG.TRAIN_WARP:
-            warp_loss = self.roi_heads.get_warp_loss()
-            losses.update(warp_loss)
 
         return losses
 

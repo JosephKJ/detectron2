@@ -5,7 +5,9 @@ from collections import deque
 class Store:
     def __init__(self, total_num_classes, items_per_class, shuffle=True):
         self.shuffle = shuffle
-        self.store = [deque(maxlen=items_per_class) for _ in range(total_num_classes)]
+        self.items_per_class = items_per_class
+        self.total_num_classes = total_num_classes
+        self.store = [deque(maxlen=self.items_per_class) for _ in range(self.total_num_classes)]
 
     def add(self, items, class_ids):
         for idx, class_id in enumerate(class_ids):
@@ -18,6 +20,9 @@ class Store:
         if self.shuffle:
             random.shuffle(items)
         return items
+
+    def reset(self):
+        self.store = [deque(maxlen=self.items_per_class) for _ in range(self.total_num_classes)]
 
     def __str__(self):
         s = self.__class__.__name__ + '('
@@ -37,5 +42,8 @@ if __name__ == "__main__":
     store = Store(10, 3)
     store.add(('a', 'b', 'c', 'd', 'e', 'f'), (1, 1, 9, 1, 0, 1))
     store.add(('h',), (4,))
+    print(store.retrieve())
+    print(len(store))
+    store.reset()
     print(store.retrieve())
     print(len(store))

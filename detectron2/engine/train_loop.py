@@ -6,6 +6,9 @@ import numpy as np
 import time
 import weakref
 import torch
+import random
+import os
+from fvcore.common.file_io import PathManager
 
 import detectron2.utils.comm as comm
 from detectron2.utils.events import EventStorage
@@ -139,6 +142,11 @@ class TrainerBase:
             h.before_train()
 
     def after_train(self):
+        file_path = os.path.join(self.cfg.WG.IMAGE_STORE_LOC, "image_store.pth")
+        if self.image_store is not None:
+            with PathManager.open(file_path, "wb") as f:
+                torch.save(self.image_store, f)
+
         for h in self._hooks:
             h.after_train()
 
@@ -194,16 +202,53 @@ class SimpleTrainer(TrainerBase):
         self._data_loader_iter = iter(data_loader)
         self.optimizer = optimizer
 
+    def update_image_store(self, images):
+        for image in images:
+            gt_classes = image["instances"].gt_classes
+            cls = gt_classes[random.randrange(0, len(gt_classes))]
+            self.image_store.add((image,), (cls,))
+
     def run_step(self):
         """
         Implement the standard training logic described above.
         """
         assert self.model.training, "[SimpleTrainer] model was changed to eval mode!"
-        start = time.perf_counter()
 
         if (self.iter + 1) % self.cfg.WG.TRAIN_WARP_AT_ITR_NO == 0 and self.cfg.WG.ENABLE:
+            verbose = False
+            if verbose:
+                logger = logging.getLogger(__name__)
+                logger.info('Image store contains %d items. They are %s' % (len(self.image_store), self.image_store))
+
             self.cfg.WG.TRAIN_WARP = True
 
+            self.optimizer.zero_grad()
+            images = self.image_store.retrieve()
+
+            if not self.cfg.WG.USE_FEATURE_STORE:
+                for i in range(0, len(images), self.cfg.WG.BATCH_SIZE):
+                    batched_images = images[i:i+self.cfg.WG.BATCH_SIZE]
+                    loss_dict = self.model(batched_images)
+                    cls_wrp = loss_dict.pop('loss_cls')
+                    reg_wrp = loss_dict.pop('loss_box_reg')
+                    warp_loss = cls_wrp + reg_wrp
+                    self.optimizer.zero_grad()
+                    warp_loss.backward()
+                    for name, param in self.model.named_parameters():
+                        if name not in self.cfg.WG.WARP_LAYERS and param.grad is not None:
+                            param.grad.fill_(0)
+                    self.optimizer.step()
+            else:
+                warp_loss_dict = self.model(images)
+                warp_loss = sum(loss for loss in warp_loss_dict.values())
+                self._detect_anomaly(warp_loss, warp_loss_dict)
+                self.optimizer.zero_grad()
+                warp_loss.backward()
+                self.optimizer.step()
+
+            self.cfg.WG.TRAIN_WARP = False
+
+        start = time.perf_counter()
         data = next(self._data_loader_iter)
         data_time = time.perf_counter() - start
 
@@ -213,17 +258,13 @@ class SimpleTrainer(TrainerBase):
         metrics_dict["data_time"] = data_time
         self._write_metrics(metrics_dict)
 
-        warp_loss = None
-        if self.cfg.WG.ENABLE and self.cfg.WG.TRAIN_WARP:
-            cls_wrp = loss_dict.pop('loss_cls_warp')
-            reg_wrp = loss_dict.pop('loss_box_reg_warp')
-            warp_loss = cls_wrp + reg_wrp
-            self._detect_anomaly(warp_loss, loss_dict)
-
         task_loss = sum(loss for loss in loss_dict.values())
         self._detect_anomaly(task_loss, loss_dict)
 
         if self.cfg.WG.ENABLE:
+            # Store the present data for future warp updates
+            self.update_image_store(data)
+
             # Update task parameters on the task loss
             self.optimizer.zero_grad()
             task_loss.backward()
@@ -231,15 +272,6 @@ class SimpleTrainer(TrainerBase):
                 if name in self.cfg.WG.WARP_LAYERS:
                         param.grad.fill_(0)
             self.optimizer.step()
-
-            # If warp update step, zero out all other gradients and update warp layers
-            if self.cfg.WG.TRAIN_WARP:
-                self.optimizer.zero_grad()
-                warp_loss.backward()
-                for name, param in self.model.named_parameters():
-                    if name not in self.cfg.WG.WARP_LAYERS and param.grad is not None:
-                        param.grad.fill_(0)
-                self.optimizer.step()
         else:
             self.optimizer.zero_grad()
             task_loss.backward()

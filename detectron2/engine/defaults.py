@@ -38,6 +38,7 @@ from detectron2.utils.collect_env import collect_env_info
 from detectron2.utils.env import seed_all_rng
 from detectron2.utils.events import CommonMetricPrinter, JSONWriter, TensorboardXWriter
 from detectron2.utils.logger import setup_logger
+from detectron2.utils.store import Store
 
 from . import hooks
 from .train_loop import SimpleTrainer
@@ -278,6 +279,8 @@ class DefaultTrainer(SimpleTrainer):
         self.cfg = cfg
 
         self.register_hooks(self.build_hooks())
+        self.image_store = Store(self.cfg.MODEL.ROI_HEADS.NUM_CLASSES, self.cfg.WG.NUM_IMAGES_PER_CLASS) if \
+            self.cfg.WG.ENABLE is True else None
 
     def resume_or_load(self, resume=True):
         """

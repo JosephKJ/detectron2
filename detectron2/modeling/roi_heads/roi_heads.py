@@ -437,7 +437,7 @@ class Res5ROIHeads(ROIHeads):
         losses["loss_box_reg_warp"] = losses.pop("loss_box_reg")
         return losses
 
-    def update_feature_store(self, proposals, roi_pooled_features, verbose=False):
+    def update_feature_store(self, features, proposals, targets):
         """
         Feature store (FS) is used to update the warp layers of the ROI Heads. Updating FS involves the following
         Steps:
@@ -446,16 +446,24 @@ class Res5ROIHeads(ROIHeads):
             3) Update the Feature Store
         :param proposals: Proposals from the RPN per image.
         :param features: The backbone feature map.
+        :param targets: Ground Truth.
         :return: None; updates self.feature_store.
         """
+        proposals = self.label_and_sample_proposals(proposals, targets)
+        del targets
+
+        proposal_boxes = [x.proposal_boxes for x in proposals]
+        # 'boxes' contains the RIO-Pooled features.
+        boxes = self._shared_roi_transform(
+            [features[f] for f in self.in_features], proposal_boxes
+        )
+
         all_proposals = Instances.cat(proposals, ignore_dim_change=True)
         for i in range(len(all_proposals)):
             proposal = all_proposals[i]
             class_id = proposal.gt_classes.item()
-            if class_id != self.num_class:
-                self.feature_store.add(((roi_pooled_features[i].unsqueeze(0).clone().detach(), proposal),), (class_id,))
-        if verbose:
-            print(self.feature_store)
+            # if class_id != self.num_class:
+            self.feature_store.add(((boxes[i].unsqueeze(0).clone().detach(), proposal),), (class_id,))
 
     def forward(self, images, features, proposals, targets=None):
         """
@@ -472,9 +480,6 @@ class Res5ROIHeads(ROIHeads):
         boxes = self._shared_roi_transform(
             [features[f] for f in self.in_features], proposal_boxes
         )
-
-        if self.training and self.enable_warp_grad:
-            self.update_feature_store(proposals, boxes)
 
         box_features = self.res5(boxes)
         feature_pooled = box_features.mean(dim=[2, 3])  # pooled to 1x1
