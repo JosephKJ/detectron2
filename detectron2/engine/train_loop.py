@@ -307,6 +307,9 @@ class SimpleTrainer(TrainerBase):
                 # caused by data_time is the maximum among workers.
                 data_time = np.max([x.pop("data_time") for x in all_metrics_dict])
                 self.storage.put_scalar("data_time", data_time)
+            if 'num_images_in_ImageStore' in all_metrics_dict[0]:
+                num_img = np.max([x.pop("num_images_in_ImageStore") for x in all_metrics_dict])
+                self.storage.put_scalar("num_images_in_ImageStore", num_img)
 
             # average the rest metrics
             metrics_dict = {
