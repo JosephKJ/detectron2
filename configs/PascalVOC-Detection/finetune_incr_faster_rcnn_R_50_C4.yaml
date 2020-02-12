@@ -3,10 +3,10 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/wg_dist_next_5/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_base_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0044999.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/wg_dist_next_5/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_base_next_5/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -25,8 +25,8 @@ MODEL:
     NMS_THRESH_TEST: 0.3
   RPN:
     FREEZE_WEIGHTS: False
-  ROI_BOX_HEAD:
-    CLS_AGNOSTIC_BBOX_REG: True
+#  ROI_BOX_HEAD:
+#    CLS_AGNOSTIC_BBOX_REG: True
 INPUT:
   MIN_SIZE_TRAIN: (480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800)
   MIN_SIZE_TEST: 800
@@ -42,7 +42,7 @@ SOLVER:
 #  MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/test #
+OUTPUT_DIR: ./output/warp_base_next_5_ft #
 VIS_PERIOD: 4000
 DISTILL:
   ENABLE: False
