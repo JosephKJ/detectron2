@@ -256,6 +256,8 @@ class SimpleTrainer(TrainerBase):
 
         metrics_dict = loss_dict
         metrics_dict["data_time"] = data_time
+        if self.image_store is not None:
+            metrics_dict["num_images_in_ImageStore"] = len(self.image_store)
         self._write_metrics(metrics_dict)
 
         task_loss = sum(loss for loss in loss_dict.values())

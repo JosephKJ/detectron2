@@ -172,6 +172,11 @@ class CommonMetricPrinter(EventWriter):
         except KeyError:
             lr = "N/A"
 
+        try:
+            soim = "{:.0f}".format(storage.history("num_images_in_ImageStore").latest())
+        except KeyError:
+            soim = "N/A"
+
         if torch.cuda.is_available():
             max_mem_mb = torch.cuda.max_memory_allocated() / 1024.0 / 1024.0
         else:
@@ -182,7 +187,7 @@ class CommonMetricPrinter(EventWriter):
             """\
 eta: {eta}  iter: {iter}  {losses}  \
 {time}  {data_time}  \
-lr: {lr}  {memory}\
+lr: {lr}  {memory} size_of_ImageStore: {soim}\
 """.format(
                 eta=eta_string,
                 iter=iteration,
@@ -196,6 +201,7 @@ lr: {lr}  {memory}\
                 time="time: {:.4f}".format(time) if time is not None else "",
                 data_time="data_time: {:.4f}".format(data_time) if data_time is not None else "",
                 lr=lr,
+                soim = soim,
                 memory="max_mem: {:.0f}M".format(max_mem_mb) if max_mem_mb is not None else "",
             )
         )
