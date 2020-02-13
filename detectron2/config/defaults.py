@@ -626,3 +626,4 @@ _C.WG.IMAGE_STORE_LOC = ''
 # ---------------------------------------------------------------------------- #
 _C.FINETUNE = CN()
 _C.FINETUNE.MIN_NUM_IMG_PER_CLASS = -1  # negative value means no finetuning.
+_C.FINETUNE.BATCH_SIZE = 2

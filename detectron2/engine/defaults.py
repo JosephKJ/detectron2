@@ -39,6 +39,7 @@ from detectron2.utils.env import seed_all_rng
 from detectron2.utils.events import CommonMetricPrinter, JSONWriter, TensorboardXWriter
 from detectron2.utils.logger import setup_logger
 from detectron2.utils.store import Store
+from detectron2.data.datasets.finetune_dataset import ImageStoreDataset
 
 from . import hooks
 from .train_loop import SimpleTrainer
@@ -241,6 +242,14 @@ class DefaultTrainer(SimpleTrainer):
         # Assume these objects must be constructed in this order.
         model = self.build_model(cfg)
         optimizer = self.build_optimizer(cfg, model)
+
+        # if cfg.FINETUNE.MIN_NUM_IMG_PER_CLASS > 0:
+        #     dataset = ImageStoreDataset(cfg)
+        #
+        #     def collate_wrapper(batch):
+        #         return batch
+        #     data_loader = torch.utils.data.DataLoader(dataset, batch_size=cfg.FINETUNE.BATCH_SIZE, collate_fn=collate_wrapper)
+        # else:
         data_loader = self.build_train_loader(cfg)
 
         # Distillation
@@ -279,8 +288,14 @@ class DefaultTrainer(SimpleTrainer):
         self.cfg = cfg
 
         self.register_hooks(self.build_hooks())
-        self.image_store = Store(self.cfg.MODEL.ROI_HEADS.NUM_CLASSES, self.cfg.WG.NUM_IMAGES_PER_CLASS) if \
-            self.cfg.WG.ENABLE is True else None
+        self.image_store = None
+        if self.cfg.WG.ENABLE:
+            file_path = os.path.join(self.cfg.WG.IMAGE_STORE_LOC, 'image_store.pth')
+            if os.path.exists(file_path):
+                with PathManager.open(file_path, "rb") as f:
+                    self.image_store = torch.load(f)
+            else:
+                self.image_store = Store(self.cfg.MODEL.ROI_HEADS.NUM_CLASSES, self.cfg.WG.NUM_IMAGES_PER_CLASS)
 
     def resume_or_load(self, resume=True):
         """
