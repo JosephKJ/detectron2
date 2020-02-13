@@ -1,9 +1,9 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
-  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/15_class/model_final.pth"
-#  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_base_next_5/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_base_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/wg_dist_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0054999.pth"
@@ -16,7 +16,7 @@ MODEL:
     # Flag to turn on/off Incremental Learning
     LEARN_INCREMENTALLY: True
     # Flag to select whether to learn base classes or new expanded classes
-    TRAIN_ON_BASE_CLASSES: True
+    TRAIN_ON_BASE_CLASSES: False
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
     NUM_BASE_CLASSES: 15
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
@@ -36,17 +36,17 @@ DATASETS:
 SOLVER:
 #  STEPS: (3000, 4000) # 21000, 22000
 #  MAX_ITER: 22500  # 17.4 epochs -> 18000 iterations 4500,
-#  STEPS: (30000, 34000) # 21000, 22000
-#  MAX_ITER: 36000  # 36000
-  STEPS: (12000, 16000)
-  MAX_ITER: 18000  # 17.4 epochs
+  STEPS: (30000, 34000) # 21000, 22000
+  MAX_ITER: 36000  # 36000
+#  STEPS: (12000, 16000)
+#  MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
 #OUTPUT_DIR: ./output/temp
-OUTPUT_DIR: ./output/warp_img_store_base_15
+OUTPUT_DIR: ./output/warp_img_store_base_15_next_5
 VIS_PERIOD: 17000
 DISTILL:
-  ENABLE: False
+  ENABLE: True
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
@@ -62,7 +62,7 @@ WG:
   NUM_IMAGES_PER_CLASS: 10
   BATCH_SIZE: 2
   USE_FEATURE_STORE: True
-  IMAGE_STORE_LOC: '/home/joseph/detectron2'
+  IMAGE_STORE_LOC: '/home/joseph'
 
 #  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
 #  WARP_LAYERS: (
