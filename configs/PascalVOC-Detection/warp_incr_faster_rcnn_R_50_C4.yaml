@@ -3,8 +3,8 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  WEIGHTS: "/tmp/pycharm_project_652/output/faster_incr/model_0014999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_next_5/model_final.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/wg_dist_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/eval_0_7_training_further/model_0054999.pth"
   MASK_ON: False
@@ -14,7 +14,7 @@ MODEL:
     # Maximum number of foreground classes to expect
     NUM_CLASSES: 20
     # Flag to turn on/off Incremental Learning
-    LEARN_INCREMENTALLY: True
+    LEARN_INCREMENTALLY: False
     # Flag to select whether to learn base classes or new expanded classes
     TRAIN_ON_BASE_CLASSES: False
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
@@ -43,7 +43,7 @@ SOLVER:
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
 #OUTPUT_DIR: ./output/temp3
-OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5
+OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5_eval
 VIS_PERIOD: 17000
 DISTILL:
   ENABLE: True
