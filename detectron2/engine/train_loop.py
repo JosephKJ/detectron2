@@ -143,7 +143,7 @@ class TrainerBase:
 
     def after_train(self):
         if comm.is_main_process():
-            file_path = os.path.join(self.cfg.WG.IMAGE_STORE_LOC, "image_store.pth")
+            file_path = os.path.join(self.cfg.WG.IMAGE_STORE_LOC)
             if self.image_store is not None:
                 with PathManager.open(file_path, "wb") as f:
                     torch.save(self.image_store, f)

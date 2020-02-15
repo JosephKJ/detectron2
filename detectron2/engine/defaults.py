@@ -290,7 +290,7 @@ class DefaultTrainer(SimpleTrainer):
         self.register_hooks(self.build_hooks())
         self.image_store = None
         if self.cfg.WG.ENABLE:
-            file_path = os.path.join(self.cfg.WG.IMAGE_STORE_LOC, 'image_store.pth')
+            file_path = os.path.join(self.cfg.WG.IMAGE_STORE_LOC)
             if os.path.exists(file_path):
                 with PathManager.open(file_path, "rb") as f:
                     self.image_store = torch.load(f)
