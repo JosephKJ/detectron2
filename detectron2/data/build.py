@@ -243,7 +243,7 @@ def get_finetune_data(cfg, dataset_dicts):
     random.shuffle(dataset_dicts)
 
     path = os.path.join(cfg.WG.IMAGE_STORE_LOC)
-    if os.path.exists(path):
+    if cfg.FINETUNE.USE_IMAGE_STORE and os.path.exists(path):
         with PathManager.open(path, 'rb') as f:
             image_store = torch.load(f)
         images = image_store.retrieve()
