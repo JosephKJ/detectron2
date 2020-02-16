@@ -35,10 +35,10 @@ SOLVER:
 #  STEPS: (30000, 34000) # 21000, 22000
 #  MAX_ITER: 36000  # 36000
   STEPS: (12000, 16000)
-  MAX_ITER: 18000  # 17.4 epochs
+  MAX_ITER: 500  # 17.4 epochs 18000
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/warp_19_base_2
+OUTPUT_DIR: ./output/warp_19_base_2_for_image_store
 VIS_PERIOD: 17000
 DISTILL:
   ENABLE: False
