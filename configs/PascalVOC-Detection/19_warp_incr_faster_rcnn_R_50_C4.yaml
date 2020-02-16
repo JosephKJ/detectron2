@@ -38,7 +38,7 @@ SOLVER:
   MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/warp_19_base
+OUTPUT_DIR: ./output/warp_19_base_2
 VIS_PERIOD: 17000
 DISTILL:
   ENABLE: False
