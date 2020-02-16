@@ -5,6 +5,7 @@ import itertools
 import logging
 import numpy as np
 import operator
+import os
 import pickle
 import torch.utils.data
 import random
@@ -232,7 +233,7 @@ def filter_images_with_class(dataset_dicts, cfg):
     return dataset_dicts
 
 
-def get_finetune_data(cfg, dataset_dicts, verbose=False):
+def get_finetune_data(cfg, dataset_dicts):
     dataset_dicts_filtered = []
     num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
     num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
@@ -241,20 +242,28 @@ def get_finetune_data(cfg, dataset_dicts, verbose=False):
     # Randomly Shuffle the images
     random.shuffle(dataset_dicts)
 
-    for class_index in range(0, num_base_class + num_novel_class):
-        img_count = 0
+    path = os.path.join(cfg.WG.IMAGE_STORE_LOC)
+    if os.path.exists(path):
+        with PathManager.open(path, 'rb') as f:
+            image_store = torch.load(f)
+        images = image_store.retrieve()
+        image_ids = [image['image_id'] for image in images]
         for image_data in dataset_dicts:
-            annos = image_data["annotations"]
-            for annotation in annos:
-                if class_index == annotation["category_id"]:
-                    dataset_dicts_filtered.append(image_data)
-                    dataset_dicts.remove(image_data)
-                    img_count += 1
+            if image_data['image_id'] in image_ids:
+                dataset_dicts_filtered.append(image_data)
+    else:
+        for class_index in range(0, num_base_class + num_novel_class):
+            img_count = 0
+            for image_data in dataset_dicts:
+                annos = image_data["annotations"]
+                for annotation in annos:
+                    if class_index == annotation["category_id"]:
+                        dataset_dicts_filtered.append(image_data)
+                        dataset_dicts.remove(image_data)
+                        img_count += 1
+                        break
+                if img_count >= num_num_img_per_class:
                     break
-            if img_count >= num_num_img_per_class:
-                break
-        if verbose:
-            print(str(class_index) + ' --> ' + str(len(dataset_dicts_filtered)))
 
     return dataset_dicts_filtered
 

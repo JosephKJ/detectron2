@@ -6,8 +6,7 @@ from fvcore.common.file_io import PathManager
 
 class ImageStoreDataset(data.Dataset):
     def __init__(self, cfg):
-        # path = os.path.join(cfg.WG.IMAGE_STORE_LOC, 'image_store.pth')
-        path = os.path.join(cfg.WG.IMAGE_STORE_LOC, 'good.plk')
+        path = os.path.join(cfg.WG.IMAGE_STORE_LOC, 'image_store.pth')
         with PathManager.open(path, 'rb') as f:
             image_store = torch.load(f)
         self.images = image_store.retrieve()
