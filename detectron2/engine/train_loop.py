@@ -147,7 +147,6 @@ class TrainerBase:
             if self.image_store is not None:
                 with PathManager.open(file_path, "wb") as f:
                     torch.save(self.image_store, f)
-
         for h in self._hooks:
             h.after_train()
 
