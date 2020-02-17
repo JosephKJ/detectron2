@@ -41,7 +41,7 @@ SOLVER:
 OUTPUT_DIR: ./output/warp_10_base_next_10
 VIS_PERIOD: 17000
 DISTILL:
-  ENABLE: False
+  ENABLE: True
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
