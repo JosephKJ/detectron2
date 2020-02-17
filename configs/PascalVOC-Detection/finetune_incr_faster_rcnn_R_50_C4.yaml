@@ -3,8 +3,8 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft_400_eg/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft_400_eg/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft_200_eg/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft_200_eg/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
   MASK_ON: False
@@ -23,7 +23,7 @@ MODEL:
     NUM_NOVEL_CLASSES: 5
     POSITIVE_FRACTION: 0.25
     NMS_THRESH_TEST: 0.4
-    SCORE_THRESH_TEST: 0.05
+    SCORE_THRESH_TEST: 0.001
   RPN:
     FREEZE_WEIGHTS: False
   ROI_BOX_HEAD:
