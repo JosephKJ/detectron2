@@ -1,0 +1,72 @@
+_BASE_: "../Base-RCNN-C4.yaml"
+MODEL:
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10/model_final.pth"
+#  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_19_base_adding_1_ft/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/warp_19_base_adding_1_ft/model_final.pth"
+  MASK_ON: False
+  RESNETS:
+    DEPTH: 50
+  ROI_HEADS:
+    # Maximum number of foreground classes to expect
+    NUM_CLASSES: 20
+    # Flag to turn on/off Incremental Learning
+    LEARN_INCREMENTALLY: False
+    # Flag to select whether to learn base classes or new expanded classes
+    TRAIN_ON_BASE_CLASSES: False
+    # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
+    NUM_BASE_CLASSES: 15
+    # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
+    NUM_NOVEL_CLASSES: 5
+    POSITIVE_FRACTION: 0.25
+    NMS_THRESH_TEST: 0.4
+    SCORE_THRESH_TEST: 0.05
+  RPN:
+    FREEZE_WEIGHTS: False
+  ROI_BOX_HEAD:
+    CLS_AGNOSTIC_BBOX_REG: True
+TEST:
+  DETECTIONS_PER_IMAGE: 1000
+INPUT:
+  MIN_SIZE_TRAIN: (480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800)
+  MIN_SIZE_TEST: 800
+DATASETS:
+  TRAIN: ('voc_2007_trainval',)
+  TEST: ('voc_2007_test',)
+SOLVER:
+#  STEPS: (3000, 4000) # 21000, 22000
+#  MAX_ITER: 22500  # 17.4 epochs -> 18000 iterations 4500,
+  STEPS: (30000, 34000) # 21000, 22000
+  MAX_ITER: 45500  # 36000
+#  STEPS: (12000, 16000)
+#  MAX_ITER: 18000  # 17.4 epochs
+  WARMUP_ITERS: 100 # 100
+  CHECKPOINT_PERIOD: 1000
+  LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
+  EXPLICIT_LR: 0.0001
+OUTPUT_DIR: ./output/warp_19_base_adding_1_ft_custom_lr #
+#OUTPUT_DIR: ./output/warp_19_base_adding_1_ft_eval #
+VIS_PERIOD: 4000
+DISTILL:
+  ENABLE: False
+  BACKBONE: True
+  RPN: False
+  ROI_HEADS: True
+  ONLY_FG_ROIS: False
+  # (1-LOSS_WEIGHT) (CLF / REG loss) + (LOSS_WEIGHT) ROI-Distillation
+  LOSS_WEIGHT: 0.8
+# Wrap Grad
+WG:
+  ENABLE: False
+  TRAIN_WARP: False
+  WARP_LAYERS: ("module.roi_heads.res5.0.conv2.weight", "module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv2.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv2.weight", "module.roi_heads.res5.2.conv3.weight")
+  IMAGE_STORE_LOC: '/home/joseph/detectron2/image_store.pth'
+
+# Finetune
+FINETUNE:
+  MIN_NUM_IMG_PER_CLASS: 10
+  BATCH_SIZE: 2
+  USE_IMAGE_STORE: False
+SEED: 9999
+VERSION: 2
