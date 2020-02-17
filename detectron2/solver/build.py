@@ -4,7 +4,7 @@ import torch
 
 from detectron2.config import CfgNode
 
-from .lr_scheduler import WarmupCosineLR, WarmupMultiStepLR
+from .lr_scheduler import WarmupCosineLR, WarmupMultiStepLR, FixedLR
 
 
 def build_optimizer(cfg: CfgNode, model: torch.nn.Module) -> torch.optim.Optimizer:
@@ -44,6 +44,16 @@ def build_lr_scheduler(
             optimizer,
             cfg.SOLVER.STEPS,
             cfg.SOLVER.GAMMA,
+            warmup_factor=cfg.SOLVER.WARMUP_FACTOR,
+            warmup_iters=cfg.SOLVER.WARMUP_ITERS,
+            warmup_method=cfg.SOLVER.WARMUP_METHOD,
+        )
+    elif name == "FixedLR":
+        return FixedLR(
+            optimizer,
+            cfg.SOLVER.STEPS,
+            cfg.SOLVER.GAMMA,
+            cfg.SOLVER.EXPLICIT_LR,
             warmup_factor=cfg.SOLVER.WARMUP_FACTOR,
             warmup_iters=cfg.SOLVER.WARMUP_ITERS,
             warmup_method=cfg.SOLVER.WARMUP_METHOD,

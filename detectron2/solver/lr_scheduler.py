@@ -49,6 +49,39 @@ class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
         return self.get_lr()
 
 
+class FixedLR(torch.optim.lr_scheduler._LRScheduler):
+    def __init__(
+        self,
+        optimizer: torch.optim.Optimizer,
+        milestones: List[int],
+        gamma: float = 0.1,
+        expl_lr: float = 0.0001,
+        warmup_factor: float = 0.001,
+        warmup_iters: int = 1000,
+        warmup_method: str = "linear",
+        last_epoch: int = -1,
+    ):
+        if not list(milestones) == sorted(milestones):
+            raise ValueError(
+                "Milestones should be a list of" " increasing integers. Got {}", milestones
+            )
+        self.milestones = milestones
+        self.gamma = gamma
+        self.expl_lr = expl_lr
+        self.warmup_factor = warmup_factor
+        self.warmup_iters = warmup_iters
+        self.warmup_method = warmup_method
+        super().__init__(optimizer, last_epoch)
+
+    def get_lr(self) -> List[float]:
+        return [
+            self.expl_lr for base_lr in self.base_lrs
+        ]
+
+    def _compute_values(self) -> List[float]:
+        # The new interface
+        return self.get_lr()
+
 class WarmupCosineLR(torch.optim.lr_scheduler._LRScheduler):
     def __init__(
         self,
