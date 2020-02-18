@@ -10,3 +10,4 @@ DATASETS:
   TEST: ("coco_2014_val",)
 
 OUTPUT_DIR: ./output/coco_base_80
+SEED: 3074309
