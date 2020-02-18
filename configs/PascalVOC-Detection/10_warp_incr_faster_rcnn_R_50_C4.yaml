@@ -37,8 +37,8 @@ SOLVER:
 #  STEPS: (12000, 16000)
 #  MAX_ITER: 18000  # 17.4 epochs 18000
   WARMUP_ITERS: 100 # 100
-  LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR
-  EXPLICIT_LR: 0.00001
+  LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR FixedLR
+  EXPLICIT_LR: 0.0001
 OUTPUT_DIR: ./output/warp_10_base_next_10_lr_change_20_iter_update
 VIS_PERIOD: 17000
 DISTILL:
