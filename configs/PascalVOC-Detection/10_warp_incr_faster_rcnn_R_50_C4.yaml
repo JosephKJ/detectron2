@@ -37,7 +37,7 @@ SOLVER:
 #  STEPS: (12000, 16000)
 #  MAX_ITER: 18000  # 17.4 epochs 18000
   WARMUP_ITERS: 100 # 100
-  LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR FixedLR
+  LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR FixedLR
   EXPLICIT_LR: 0.0001
 OUTPUT_DIR: ./output/warp_10_base_next_10_lr_change_20_iter_update
 VIS_PERIOD: 17000
@@ -48,7 +48,7 @@ DISTILL:
   ROI_HEADS: True
   ONLY_FG_ROIS: False
   # (1-LOSS_WEIGHT) (CLF / REG loss) + (LOSS_WEIGHT) ROI-Distillation
-  LOSS_WEIGHT: 0.8
+  LOSS_WEIGHT: 0.2
 # Warp Grad
 WG:
   ENABLE: True

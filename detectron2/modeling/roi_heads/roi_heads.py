@@ -365,6 +365,7 @@ class Res5ROIHeads(ROIHeads):
         self.enable_roi_distillation = cfg.DISTILL.ROI_HEADS
         self.distill_only_fg_roi = cfg.DISTILL.ONLY_FG_ROIS
         self.dist_loss_weight = cfg.DISTILL.LOSS_WEIGHT
+        self.enable_distillation = cfg.DISTILL.ENABLE
 
     def set_base_model(self, base_model):
         self.base_model = base_model
@@ -431,6 +432,7 @@ class Res5ROIHeads(ROIHeads):
             self.smooth_l1_beta,
             self.invalid_class_range,
             self.dist_loss_weight,
+            self.enable_distillation
         )
         losses = outputs.losses()
         losses["loss_cls_warp"] = losses.pop("loss_cls")
@@ -494,6 +496,7 @@ class Res5ROIHeads(ROIHeads):
             self.smooth_l1_beta,
             self.invalid_class_range,
             self.dist_loss_weight,
+            self.enable_distillation
         )
 
         if self.training:

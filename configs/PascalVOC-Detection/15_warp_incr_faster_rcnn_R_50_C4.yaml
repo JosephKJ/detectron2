@@ -1,8 +1,8 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  WEIGHTS: "/home/jj1/detectron2/output/warp_img_store_base_15_sec/model_final.pth"
-  BASE_WEIGHTS: "/home/jj1/detectron2/output/warp_img_store_base_15_sec/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -59,7 +59,7 @@ WG:
   NUM_IMAGES_PER_CLASS: 10
   BATCH_SIZE: 2
   USE_FEATURE_STORE: True
-  IMAGE_STORE_LOC: '/home/jj1/detectron2/image_store.pth'
+  IMAGE_STORE_LOC: '/home/joseph/detectron2/image_store.pth'
 
 #  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
 #  WARP_LAYERS: (

@@ -125,7 +125,7 @@ class FastRCNNOutputs(object):
 
     def __init__(
         self, box2box_transform, pred_class_logits, pred_proposal_deltas, proposals, smooth_l1_beta, invalid_class_range,
-            dist_loss_weight=0.5
+            dist_loss_weight=0.5, enable_distillation=False
     ):
         """
         Args:
@@ -168,6 +168,7 @@ class FastRCNNOutputs(object):
             self.gt_classes = cat([p.gt_classes for p in proposals], dim=0)
 
         self.dist_loss_weight = dist_loss_weight
+        self.enable_distillation = enable_distillation
 
     def _log_accuracy(self):
         """
@@ -267,10 +268,16 @@ class FastRCNNOutputs(object):
         Returns:
             A dict of losses (scalar tensors) containing keys "loss_cls" and "loss_box_reg".
         """
-        return {
-            "loss_cls": (1 - self.dist_loss_weight) * self.softmax_cross_entropy_loss(),
-            "loss_box_reg": (1 - self.dist_loss_weight) * self.smooth_l1_loss(),
-        }
+        if self.enable_distillation:
+            return {
+                "loss_cls": (1 - self.dist_loss_weight) * self.softmax_cross_entropy_loss(),
+                "loss_box_reg": (1 - self.dist_loss_weight) * self.smooth_l1_loss(),
+            }
+        else:
+            return {
+                "loss_cls": self.softmax_cross_entropy_loss(),
+                "loss_box_reg": self.smooth_l1_loss(),
+            }
 
     def predict_boxes(self):
         """

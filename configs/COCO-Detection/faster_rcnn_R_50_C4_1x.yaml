@@ -8,3 +8,5 @@ MODEL:
 DATASETS:
   TRAIN: ("coco_2014_train",)
   TEST: ("coco_2014_val",)
+
+OUTPUT_DIR: ./output/coco_base_80

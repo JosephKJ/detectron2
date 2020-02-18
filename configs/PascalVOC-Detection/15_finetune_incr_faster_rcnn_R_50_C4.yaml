@@ -1,10 +1,12 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10_lr_change_20_iter_update/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10_lr_change_20_iter_update/model_final.pth"
-#  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_19_base_adding_1_ft/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/warp_19_base_adding_1_ft/model_final.pth"
+#  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_lr_0001/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_lr_0001/model_final.pth"
+#  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -21,13 +23,13 @@ MODEL:
     NUM_NOVEL_CLASSES: 5
     POSITIVE_FRACTION: 0.25
     NMS_THRESH_TEST: 0.4
-    SCORE_THRESH_TEST: 0.05
+    SCORE_THRESH_TEST: 0.001
   RPN:
     FREEZE_WEIGHTS: False
   ROI_BOX_HEAD:
     CLS_AGNOSTIC_BBOX_REG: True
 TEST:
-  DETECTIONS_PER_IMAGE: 1000
+  DETECTIONS_PER_IMAGE: 100
 INPUT:
   MIN_SIZE_TRAIN: (480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800)
   MIN_SIZE_TEST: 800
@@ -44,10 +46,9 @@ SOLVER:
   WARMUP_ITERS: 100 # 100
   CHECKPOINT_PERIOD: 1000
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-  EXPLICIT_LR: 0.0001
-OUTPUT_DIR: ./output/warp_10_base_next_10_lr_change_20_iter_update_0001_finetune #
-#OUTPUT_DIR: ./output/warp_19_base_adding_1_ft_eval #
+OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5_lr_0001_ft #
 VIS_PERIOD: 4000
+
 
 # Finetune
 FINETUNE:
@@ -55,4 +56,3 @@ FINETUNE:
   BATCH_SIZE: 2
   USE_IMAGE_STORE: False
 SEED: 9999
-VERSION: 2
