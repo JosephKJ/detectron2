@@ -3,8 +3,8 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_lr_0001/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_lr_0001/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_weight_0_2_0001/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_weight_0_2_0001/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
   MASK_ON: False
@@ -46,7 +46,7 @@ SOLVER:
   WARMUP_ITERS: 100 # 100
   CHECKPOINT_PERIOD: 1000
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
-OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5_lr_0001_ft #
+OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5_weight_0_2_0001_FT #
 VIS_PERIOD: 4000
 
 
