@@ -39,6 +39,7 @@ SOLVER:
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR FixedLR
   EXPLICIT_LR: 0.0001
+  CHECKPOINT_PERIOD: 1000
 OUTPUT_DIR: ./output/warp_19_base_adding_1_weight_0_2
 VIS_PERIOD: 17000
 DISTILL:
