@@ -4,10 +4,16 @@ MODEL:
   MASK_ON: False
   RESNETS:
     DEPTH: 50
+  ROI_HEADS:
+    NUM_CLASSES: 80
+    LEARN_INCREMENTALLY: True
+    TRAIN_ON_BASE_CLASSES: True
+    NUM_BASE_CLASSES: 40
+    NUM_NOVEL_CLASSES: 40
 
 DATASETS:
   TRAIN: ("coco_2014_train",)
   TEST: ("coco_2014_val",)
 
-OUTPUT_DIR: ./output/coco_base_80
+OUTPUT_DIR: ./output/coco_first_40
 SEED: 3074309
