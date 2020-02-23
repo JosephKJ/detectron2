@@ -201,7 +201,7 @@ class FastRCNNOutputs(object):
             scalar Tensor
         """
         self._log_accuracy()
-        self.pred_class_logits[:, self.invalid_class_range] = -100
+        self.pred_class_logits[:, self.invalid_class_range] = -10e10
         return F.cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean")
 
     def smooth_l1_loss(self):

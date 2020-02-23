@@ -244,7 +244,7 @@ _C.MODEL.ROI_HEADS.NUM_CLASSES = 80
 # Flag to turn on/off Incremental Learning
 _C.MODEL.ROI_HEADS.LEARN_INCREMENTALLY = False
 # Flag to select whether to learn base classes or new expanded classes
-_C.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES = True
+_C.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES = False
 # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
 _C.MODEL.ROI_HEADS.NUM_BASE_CLASSES = 60
 # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
