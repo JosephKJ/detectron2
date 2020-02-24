@@ -89,7 +89,7 @@ All models available for download through this document are licensed under the
 <th valign="bottom">download</th>
 <!-- TABLE BODY -->
 <!-- ROW: faster_rcnn_R_50_C4_1x -->
- <tr><td align="left"><a href="configs/COCO-Detection/faster_rcnn_R_50_C4_1x.yaml">R50-C4</a></td>
+ <tr><td align="left"><a href="configs/COCO-Detection/warp_faster_rcnn_R_50_C4_1x.yaml">R50-C4</a></td>
 <td align="center">1x</td>
 <td align="center">0.551</td>
 <td align="center">0.110</td>

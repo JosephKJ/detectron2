@@ -17,3 +17,13 @@ DATASETS:
 
 OUTPUT_DIR: ./output/coco_first_40
 SEED: 3074309
+
+WG:
+  ENABLE: True
+  TRAIN_WARP_AT_ITR_NO: 20
+  WARP_LAYERS: ("module.roi_heads.res5.2.conv3.weight",)
+  NUM_FEATURES_PER_CLASS: 100
+  NUM_IMAGES_PER_CLASS: 10
+  BATCH_SIZE: 2
+  USE_FEATURE_STORE: True
+  IMAGE_STORE_LOC: '/home/joseph/detectron2/40_image_store.pth'

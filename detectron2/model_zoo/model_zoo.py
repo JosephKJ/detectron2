@@ -18,7 +18,7 @@ class ModelZooUrls(object):
     # format: {config_path.yaml} -> model_id/model_final_{commit}.pkl
     CONFIG_PATH_TO_URL_SUFFIX = {
         # COCO Detection with Faster R-CNN
-        "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml": "137257644/model_final_721ade.pkl",
+        "COCO-Detection/warp_faster_rcnn_R_50_C4_1x.yaml": "137257644/model_final_721ade.pkl",
         "COCO-Detection/faster_rcnn_R_50_DC5_1x.yaml": "137847829/model_final_51d356.pkl",
         "COCO-Detection/faster_rcnn_R_50_FPN_1x.yaml": "137257794/model_final_b275ba.pkl",
         "COCO-Detection/faster_rcnn_R_50_C4_3x.yaml": "137849393/model_final_f97cb7.pkl",
