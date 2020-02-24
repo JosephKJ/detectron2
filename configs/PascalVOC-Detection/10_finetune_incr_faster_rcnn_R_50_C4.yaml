@@ -1,8 +1,8 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"./output/warp_10_base_next_10_0001_0_05/model_final.pth
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10_0001_0_05/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10_0001_0_05/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10_0002_0_05/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_10_base_next_10_0002_0_05/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_19_base_adding_1_ft/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_19_base_adding_1_ft/model_final.pth"
   MASK_ON: False
@@ -45,7 +45,7 @@ SOLVER:
   CHECKPOINT_PERIOD: 1000
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR FixedLR
   EXPLICIT_LR: 0.0001
-OUTPUT_DIR: ./output/warp_10_base_next_10_0001_0_05_FT #
+OUTPUT_DIR: ./output/warp_10_base_next_10_0002_0_05_FT #
 #OUTPUT_DIR: ./output/warp_19_base_adding_1_ft_eval #
 VIS_PERIOD: 4000
 
@@ -54,5 +54,5 @@ FINETUNE:
   MIN_NUM_IMG_PER_CLASS: 10
   BATCH_SIZE: 2
   USE_IMAGE_STORE: False
-SEED: 9999
+SEED: 212669
 VERSION: 2
