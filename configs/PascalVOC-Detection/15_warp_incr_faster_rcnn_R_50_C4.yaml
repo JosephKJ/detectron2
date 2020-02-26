@@ -40,7 +40,7 @@ SOLVER:
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
 #OUTPUT_DIR: ./output/temp3
-OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5_weight_0_2_0001
+OUTPUT_DIR: ./output/warp_img_store_base_15_p_5_for_pickle
 VIS_PERIOD: 17000
 DISTILL:
   ENABLE: True
@@ -59,7 +59,7 @@ WG:
   NUM_IMAGES_PER_CLASS: 10
   BATCH_SIZE: 2
   USE_FEATURE_STORE: True
-  IMAGE_STORE_LOC: '/home/joseph/detectron2/image_store.pth'
+  IMAGE_STORE_LOC: '/home/joseph/detectron2/image_store_15.pth'
 
 #  WARP_LAYERS: ("module.roi_heads.res5.0.conv3.weight", "module.roi_heads.res5.1.conv3.weight", "module.roi_heads.res5.2.conv3.weight")
 #  WARP_LAYERS: (
