@@ -12,7 +12,7 @@ MODEL:
     # Flag to turn on/off Incremental Learning
     LEARN_INCREMENTALLY: True
     # Flag to select whether to learn base classes or new expanded classes
-    TRAIN_ON_BASE_CLASSES: False
+    TRAIN_ON_BASE_CLASSES: True
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
     NUM_BASE_CLASSES: 15
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
