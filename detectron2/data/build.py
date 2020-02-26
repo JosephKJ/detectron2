@@ -233,8 +233,25 @@ def filter_images_with_class(dataset_dicts, cfg):
     return dataset_dicts
 
 
+def get_eval_data(dataset_dicts, cfg):
+    num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
+    num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
+
+    allowed_class = list(range(0, num_base_class+num_novel_class))
+    for entry in copy.copy(dataset_dicts):
+        annos = entry["annotations"]
+        for annotation in copy.copy(annos):
+            if annotation["category_id"] not in allowed_class:
+                annos.remove(annotation)
+        if len(annos) == 0:
+            dataset_dicts.remove(entry)
+
+    return dataset_dicts
+
+
 def get_finetune_data(cfg, dataset_dicts):
     dataset_dicts_filtered = []
+    num_class = cfg.MODEL.ROI_HEADS.NUM_CLASSES
     num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
     num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
     num_num_img_per_class = cfg.FINETUNE.MIN_NUM_IMG_PER_CLASS
@@ -256,12 +273,18 @@ def get_finetune_data(cfg, dataset_dicts):
             img_count = 0
             for image_data in dataset_dicts:
                 annos = image_data["annotations"]
+                has_class_index = False
+                has_unknown_class = False
                 for annotation in annos:
                     if class_index == annotation["category_id"]:
-                        dataset_dicts_filtered.append(image_data)
-                        dataset_dicts.remove(image_data)
-                        img_count += 1
-                        break
+                        has_class_index = True
+                    if annotation["category_id"] in range(num_base_class + num_novel_class, num_class):
+                        has_unknown_class = True
+
+                if has_class_index and not has_unknown_class:
+                    dataset_dicts_filtered.append(image_data)
+                    dataset_dicts.remove(image_data)
+                    img_count += 1
                 if img_count >= num_num_img_per_class:
                     break
 
@@ -314,6 +337,8 @@ def get_detection_dataset_dicts(
             if cfg.FINETUNE.MIN_NUM_IMG_PER_CLASS > 0:
                 if not test:
                     dataset_dicts = get_finetune_data(cfg, dataset_dicts)
+                else:
+                    dataset_dicts = get_eval_data(dataset_dicts, cfg)
             else:
                 dataset_dicts = filter_images_with_class(dataset_dicts, cfg)
             print_instances_class_histogram(dataset_dicts, class_names)

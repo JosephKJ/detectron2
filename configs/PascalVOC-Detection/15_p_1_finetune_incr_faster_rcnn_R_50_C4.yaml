@@ -3,8 +3,8 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_15_p_1/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_15_p_1/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_16_p_1/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_16_p_1/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
   MASK_ON: False
@@ -40,14 +40,14 @@ SOLVER:
 #  STEPS: (3000, 4000) # 21000, 22000
 #  MAX_ITER: 22500  # 17.4 epochs -> 18000 iterations 4500,
   STEPS: (30000, 34000) # 21000, 22000
-  MAX_ITER: 45500  # 36000
+  MAX_ITER: 37000  # 36000
 #  STEPS: (12000, 16000)
 #  MAX_ITER: 18000  # 17.4 epochs
   WARMUP_ITERS: 100 # 100
   CHECKPOINT_PERIOD: 1000
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
-OUTPUT_DIR: ./output/warp_15_p_1_FT #
+OUTPUT_DIR: ./output/warp_16_p_1_FT #
 VIS_PERIOD: 4000
 
 
