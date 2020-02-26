@@ -45,14 +45,15 @@ SOLVER:
   CHECKPOINT_PERIOD: 1000
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR FixedLR
   EXPLICIT_LR: 0.0001
-OUTPUT_DIR: ./output/warp_10_base_next_10_0002_0_005_FT_50_eg #
+OUTPUT_DIR: ./output/warp_10_base_next_10_0002_0_005_FT_50_eg_only_task_update #
 #OUTPUT_DIR: ./output/warp_19_base_adding_1_ft_eval #
 VIS_PERIOD: 4000
 
 # Finetune
 FINETUNE:
+  ENABLE: False
   MIN_NUM_IMG_PER_CLASS: 50
   BATCH_SIZE: 2
   USE_IMAGE_STORE: False
-SEED: 212669
+SEED: 212
 VERSION: 2

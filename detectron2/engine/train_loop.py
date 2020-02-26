@@ -274,6 +274,14 @@ class SimpleTrainer(TrainerBase):
                 if name in self.cfg.WG.WARP_LAYERS:
                         param.grad.fill_(0)
             self.optimizer.step()
+        elif self.cfg.FINETUNE.ENABLE:
+            # Update only the task layers
+            self.optimizer.zero_grad()
+            task_loss.backward()
+            for name, param in self.model.named_parameters():
+                if name in self.cfg.WG.WARP_LAYERS:
+                        param.grad.fill_(0)
+            self.optimizer.step()
         else:
             self.optimizer.zero_grad()
             task_loss.backward()
