@@ -18,7 +18,7 @@ MODEL:
     # Flag to select whether to learn base classes or new expanded classes
     TRAIN_ON_BASE_CLASSES: False
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
-    NUM_BASE_CLASSES: 15
+    NUM_BASE_CLASSES: 16
     # Number of novel classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to False
     NUM_NOVEL_CLASSES: 1
     POSITIVE_FRACTION: 0.25
