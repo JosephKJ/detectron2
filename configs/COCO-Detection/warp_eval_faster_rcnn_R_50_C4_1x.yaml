@@ -14,8 +14,8 @@ MODEL:
     NMS_THRESH_TEST: 0.4
 DATASETS:
   TRAIN: ("coco_2014_train",)
-  TEST: ("coco_2014_minival",)
-  # TEST: ("coco_2014_val",)
+#  TEST: ("coco_2014_minival",)
+   TEST: ("coco_2014_val",)
 
 OUTPUT_DIR: ./output/coco_base_minival
 SEED: 3074309
