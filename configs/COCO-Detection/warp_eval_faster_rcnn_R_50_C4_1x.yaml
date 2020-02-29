@@ -1,7 +1,7 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
-  WEIGHTS: "/home/joseph/detectron2/output/coco_next_40_FT/model_0134999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/coco_next_40_FT/model_0134999.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/coco_next_40_FT/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/coco_next_40_FT/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
