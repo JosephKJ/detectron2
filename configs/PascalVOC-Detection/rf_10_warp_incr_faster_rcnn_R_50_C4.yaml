@@ -1,8 +1,8 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  WEIGHTS: "/home/joseph/detectron2/output/10_next_10_standard/model_final.pth" # warp_10_base
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/10_next_10_standard/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/warp_10_base/model_final.pth" # warp_10_base
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_10_base/model_final.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -40,10 +40,10 @@ SOLVER:
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
 #OUTPUT_DIR: ./output/temp3
-OUTPUT_DIR: ./output/10_next_10_standard_eval
+OUTPUT_DIR: ./output/10_next_10_only_distill
 VIS_PERIOD: 17000
 DISTILL:
-  ENABLE: False
+  ENABLE: True
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
