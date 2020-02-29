@@ -1,7 +1,7 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
-  WEIGHTS: "/home/joseph/detectron2/output/coco_next_40/model_0139999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/coco_next_40/model_0139999.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/coco_next_40/model_0144999.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/coco_next_40/model_0144999.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -16,7 +16,7 @@ DATASETS:
   TRAIN: ("coco_2014_train",)
   TEST: ("coco_2014_val",)
 
-OUTPUT_DIR: ./output/coco_next_40_FT
+OUTPUT_DIR: ./output/coco_next_40_144999_FT
 SEED: 3074309
 VERSION: 2
 
