@@ -40,10 +40,10 @@ SOLVER:
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
 #OUTPUT_DIR: ./output/temp3
-OUTPUT_DIR: ./output/10_next_10_only_distill_correct
+OUTPUT_DIR: ./output/10_next_10_only_warp
 VIS_PERIOD: 17000
 DISTILL:
-  ENABLE: True
+  ENABLE: False
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
@@ -52,7 +52,7 @@ DISTILL:
   LOSS_WEIGHT: 0.2
 # Warp Grad
 WG:
-  ENABLE: False
+  ENABLE: True
   TRAIN_WARP_AT_ITR_NO: 20
   WARP_LAYERS: ("module.roi_heads.res5.2.conv3.weight",)
   NUM_FEATURES_PER_CLASS: 100
