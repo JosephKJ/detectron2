@@ -10,7 +10,7 @@ MODEL:
     # Maximum number of foreground classes to expect
     NUM_CLASSES: 20
     # Flag to turn on/off Incremental Learning
-    LEARN_INCREMENTALLY: False
+    LEARN_INCREMENTALLY: True
     # Flag to select whether to learn base classes or new expanded classes
     TRAIN_ON_BASE_CLASSES: False
     # Number of base classes; these classes would be trained if TRAIN_ON_BASE_CLASSES is set to True
@@ -40,7 +40,7 @@ SOLVER:
   LR_SCHEDULER_NAME: WarmupMultiStepLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
 #OUTPUT_DIR: ./output/temp3
-OUTPUT_DIR: ./output/10_next_10_only_distill
+OUTPUT_DIR: ./output/10_next_10_only_distill_correct
 VIS_PERIOD: 17000
 DISTILL:
   ENABLE: True
