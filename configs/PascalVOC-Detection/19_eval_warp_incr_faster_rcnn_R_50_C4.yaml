@@ -1,8 +1,8 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/19_next_1_standard/model_0019999.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/19_next_1_standard/model_0019999.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/19_next_1_standard/model_0024999.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/19_next_1_standard/model_0024999.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
