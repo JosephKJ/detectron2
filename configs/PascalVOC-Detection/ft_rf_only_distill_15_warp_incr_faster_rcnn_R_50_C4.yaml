@@ -1,10 +1,10 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022999.pth"
-#  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022999.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
+#  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022999.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022999.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -41,7 +41,7 @@ SOLVER:
   WARMUP_ITERS: 100 # 100
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
-  CHECKPOINT_PERIOD: 500
+  CHECKPOINT_PERIOD: 100
 #OUTPUT_DIR: ./output/temp3
 OUTPUT_DIR: ./output/LOSS_WEIGHT_0_1_finetune_lower
 VIS_PERIOD: 17000
