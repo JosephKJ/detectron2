@@ -1,10 +1,10 @@
 _BASE_: "../Base-RCNN-C4.yaml"
 MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
-#  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022999.pth"
-#  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022999.pth"
+#  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
+#  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022599.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/LOSS_WEIGHT_0_1_finetune_lower/model_0022599.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
