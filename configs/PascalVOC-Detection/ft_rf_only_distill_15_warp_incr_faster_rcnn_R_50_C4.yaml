@@ -43,7 +43,7 @@ SOLVER:
 OUTPUT_DIR: ./output/LOSS_WEIGHT_0_1_finetune
 VIS_PERIOD: 17000
 DISTILL:
-  ENABLE: True
+  ENABLE: False
   BACKBONE: True
   RPN: False
   ROI_HEADS: True
