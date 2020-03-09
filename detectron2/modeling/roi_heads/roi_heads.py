@@ -355,10 +355,13 @@ class Res5ROIHeads(ROIHeads):
         self.num_base_class = cfg.MODEL.ROI_HEADS.NUM_BASE_CLASSES
         self.num_novel_class = cfg.MODEL.ROI_HEADS.NUM_NOVEL_CLASSES
         self.num_class = cfg.MODEL.ROI_HEADS.NUM_CLASSES
-        if cfg.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES:
-            self.invalid_class_range = list(range(self.num_base_class, self.num_class))
+        if cfg.MODEL.ROI_HEADS.LEARN_INCREMENTALLY:
+            if cfg.MODEL.ROI_HEADS.TRAIN_ON_BASE_CLASSES:
+                self.invalid_class_range = list(range(self.num_base_class, self.num_class))
+            else:
+                self.invalid_class_range = list(range(self.num_base_class + self.num_novel_class, self.num_class))
         else:
-            self.invalid_class_range = list(range(self.num_base_class + self.num_novel_class, self.num_class))
+            self.invalid_class_range = []
         logging.getLogger(__name__).info("Invalid class range: " + str(self.invalid_class_range))
 
         self.base_model = None
