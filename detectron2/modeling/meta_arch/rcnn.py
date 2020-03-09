@@ -112,7 +112,13 @@ class GeneralizedRCNN(nn.Module):
                 gt_instances = None
 
             features = self.backbone(img.tensor)
-            proposals, _ = self.proposal_generator(img, features, gt_instances)
+            if self.proposal_generator:
+                proposals, _ = self.proposal_generator(img, features, gt_instances)
+            else:
+                assert "proposals" in all_images_in_store[0]
+                proposals = [x["proposals"].to(self.device) for x in [image]]
+
+            # proposals, _ = self.proposal_generator(img, features, gt_instances)
             # self.roi_heads.update_feature_store(features, proposals, gt_instances)
             _, detector_losses = self.roi_heads(img, features, proposals, gt_instances)
 

@@ -132,10 +132,12 @@ def load_proposals_into_dataset(dataset_dicts, proposal_file):
         if key in proposals:
             proposals[rename_keys[key]] = proposals.pop(key)
 
+    proposals['boxes'] = [np.float16(p) for p in proposals['boxes']]
+
     # Fetch the indexes of all proposals that are in the dataset
     # Convert image_id to str since they could be int.
     img_ids = set({str(record["image_id"]) for record in dataset_dicts})
-    id_to_index = {str(id): i for i, id in enumerate(proposals["ids"]) if str(id) in img_ids}
+    id_to_index = {str(id).zfill(6): i for i, id in enumerate(proposals["ids"]) if str(id).zfill(6) in img_ids}
 
     # Assuming default bbox_mode of precomputed proposals are 'XYXY_ABS'
     bbox_mode = BoxMode(proposals["bbox_mode"]) if "bbox_mode" in proposals else BoxMode.XYXY_ABS
