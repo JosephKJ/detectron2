@@ -54,7 +54,7 @@ class GeneralizedRCNN(nn.Module):
 
     def set_base_model(self, base_model):
         self.base_model = base_model
-        self.proposal_generator.set_base_model(base_model)
+        # self.proposal_generator.set_base_model(base_model)
         self.roi_heads.set_base_model(base_model)
 
     def visualize_training(self, batched_inputs, proposals):
