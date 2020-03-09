@@ -5,6 +5,7 @@ from fvcore.common.file_io import PathManager
 import os
 import numpy as np
 import xml.etree.ElementTree as ET
+from random import shuffle
 
 from detectron2.structures import BoxMode
 from detectron2.data import DatasetCatalog, MetadataCatalog
@@ -32,6 +33,8 @@ def load_voc_instances(dirname: str, split: str):
     """
     with PathManager.open(os.path.join(dirname, "ImageSets", "Main", split + ".txt")) as f:
         fileids = np.loadtxt(f, dtype=np.str)
+
+    shuffle(CLASS_NAMES)
 
     dicts = []
     for fileid in fileids:
