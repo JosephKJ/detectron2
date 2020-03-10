@@ -51,7 +51,7 @@ DISTILL:
   LOSS_WEIGHT: 0.005
 # Warp Grad
 WG:
-  ENABLE: False
+  ENABLE: True
   TRAIN_WARP_AT_ITR_NO: 20
   WARP_LAYERS: ("module.roi_heads.res5.2.conv3.weight",)
   NUM_FEATURES_PER_CLASS: 100
