@@ -34,7 +34,7 @@ def load_voc_instances(dirname: str, split: str):
     with PathManager.open(os.path.join(dirname, "ImageSets", "Main", split + ".txt")) as f:
         fileids = np.loadtxt(f, dtype=np.str)
 
-    # shuffle(CLASS_NAMES)
+    shuffle(CLASS_NAMES)
 
     dicts = []
     for fileid in fileids:
