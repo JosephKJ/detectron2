@@ -3,8 +3,8 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/random_2_next_5/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/random_2_next_5/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/random_2_next_5_FT/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/random_2_next_5_FT/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
   MASK_ON: False
