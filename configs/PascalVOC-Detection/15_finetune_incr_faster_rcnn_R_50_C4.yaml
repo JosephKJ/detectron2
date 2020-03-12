@@ -3,8 +3,8 @@ MODEL:
 #  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_ft/model_0039999.pth"
-  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_weight_0_2_0001/model_final.pth"
-  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5_weight_0_2_0001/model_final.pth"
+  BASE_WEIGHTS: "/home/joseph/detectron2/output/random_2_next_5/model_final.pth"
+  WEIGHTS: "/home/joseph/detectron2/output/random_2_next_5/model_final.pth"
 #  BASE_WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
 #  WEIGHTS: "/home/joseph/detectron2/output/warp_img_store_base_15_sec_next_5/model_final.pth"
   MASK_ON: False
@@ -47,7 +47,7 @@ SOLVER:
   CHECKPOINT_PERIOD: 1000
   LR_SCHEDULER_NAME: FixedLR # ReduceLROnPlateau WarmupMultiStepLR
   EXPLICIT_LR: 0.0001
-OUTPUT_DIR: ./output/warp_img_store_base_15_sec_next_5_weight_0_2_0001_FT_0001 #
+OUTPUT_DIR: ./output/random_2_next_5_FT #
 VIS_PERIOD: 4000
 
 
@@ -56,4 +56,4 @@ FINETUNE:
   MIN_NUM_IMG_PER_CLASS: 10
   BATCH_SIZE: 2
   USE_IMAGE_STORE: False
-SEED: 9999
+SEED: 999
